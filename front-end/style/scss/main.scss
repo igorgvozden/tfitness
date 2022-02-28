@@ -1,0 +1,27 @@
+@import './colors';
+@import './fonts';
+@import './header';
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: $font-main;
+    
+    color: $fontColor;
+}
+
+body {
+    background-color: $backgroundColor;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.headings-font {
+    font-family: $font-titles;
+}
+
+.hidden {
+    display: none;
+}

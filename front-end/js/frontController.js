@@ -1,8 +1,8 @@
-import { API_URL } from '../frontConfig';
-import * as model from '../js/frontModel';
-import subNavView from '../views/subNavView';
+import { API_URL } from '../frontConfig.js';
+import * as model from './frontModel.mjs';
+import navbarView from './../views/navbarView.mjs';
 
-console.log('we are live', API_URL);
+console.log('we are live 1', API_URL);
 
 let getData = async function () {
     try {
@@ -75,6 +75,7 @@ let login = async function () {
 
         // 3) update leggingsState podacima koje si fetchovao sa DB
         // model.createLeggingsStateObj(data);
+
     } catch (error) {
         console.log('ooopssss', error);
         throw error;
@@ -83,28 +84,22 @@ let login = async function () {
 
 ///////// HANDLER FUNKCIJE
 
-// ovde treba da dodam funkcijju koja ce da bude handler parametar funkcija za subnavview
-//ova fja se poziva kao parametar funkcije iz subnavview u init()
-// ova funkcija poziva i model state
-
-const subNavViewHandlerRender = async function () {
+const handleNavbarView = async function () {
     try {
         // 1) proveri da li state ima podatke, ako nema fetchuj podatke i kreiraj state za leggings
         if (model.leggingsState.results === null) await getData();
 
         // 2) pozovi render funkciju da renderuje markup podacima koje sada subnav view ima 
-        subNavView.render(model.leggingsState);
+        navbarView.initialize(model.leggingsState);
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-};
+}
+
 
 /////////
 
 const init = function () {
-    subNavView.addHandlerRender(subNavViewHandlerRender);
-    subNavView.addMouseOver();
-    subNavView.addMouseOut();
-    // login();
+    navbarView.addHandlerInitialize(handleNavbarView);
 };
 init();

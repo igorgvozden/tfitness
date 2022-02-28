@@ -5,6 +5,11 @@ const leggingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    item: {
+        type: String, // da li je set ili samo helanke na primer
+        required: true,
+        lowercase: true
+    },
     price: {
         type: Number,
         required: true

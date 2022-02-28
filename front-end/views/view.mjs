@@ -1,21 +1,18 @@
-import icons from '../../images/icons.svg';
+// import icons from '../../images/icons.svg';
 
 export default class View {
     _data;
     // trebace mi parent element za svaki view
     // error message za svaki view
-    // generateMarkup() za svaki view
+    // initialize za svaki view
 
-    render(data) {
-        if (!data) return this._renderError();
+    initialize(data) {
+        // if (!data) return this._renderError();
 
         this._data = data;
-        const markup = this._generateMarkup();
-        this._clear();
-        this._parentElement.insertAdjacentHTML('afterbegin', markup);
     };
 
-    renderSpinner() {
+    renderSpinner(element) {
         const markup =
             `<div class="spinner">
                 <svg>
@@ -24,7 +21,7 @@ export default class View {
             </div>`;
 
         this._clear();
-        this._parentElement.insertAdjacentHTML('afterbegin', markup);
+        element.insertAdjacentHTML('afterbegin', markup);
     };
 
     _clear() {

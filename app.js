@@ -14,6 +14,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.static(`${__dirname}/images`));
+app.use(express.static(`${__dirname}/sass`));
 // pravi security http headerse
 app.use(helmet());
 

@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Russo+One&display=swap");
+.header {
+  position: relative;
+  min-width: 100%; }
+
+.header-container {
+  margin: 0 auto;
+  width: 75%;
+  min-width: 75%;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  overflow: hidden; }
+
+.header-container_nav {
+  padding: 1rem 2rem;
+  box-sizing: border-box;
+  min-width: 75%;
+  position: fixed;
+  z-index: 5; }
+
+.header-container_nav_navigation {
+  display: flex;
+  justify-content: center;
+  align-items: baseline; }
+
+.navigation_logo {
+  margin-right: auto; }
+
+.navigation_product-buttons {
+  display: flex; }
+
+.navigation_buttons {
+  margin-left: auto; }
+
+.nav-tabs__text--products {
+  margin: 0 1rem;
+  font-size: 1.3rem; }
+  .nav-tabs__text--products:hover {
+    cursor: pointer; }
+
+.nav__btn {
+  margin: 0 0.3rem;
+  background: none;
+  border: none;
+  min-height: 1.5rem;
+  min-width: 1.5rem; }
+
+.nav__icon {
+  min-height: 100%; }
+
+.header-container_sub-nav {
+  display: flex;
+  min-height: 25rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: 0.3s;
+  transform: translateY(-100%);
+  z-index: 6; }
+
+.sub-nav__products-list {
+  padding: 5rem 2rem 2rem 2rem;
+  flex-basis: 65%; }
+
+.sub-nav__products__ul {
+  list-style: none;
+  transition: 0.3s; }
+
+.sub-nav__products__ul__li {
+  padding: 0.1rem 0;
+  max-width: max-content;
+  animation-name: slide-reverse;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards; }
+  .sub-nav__products__ul__li:hover {
+    cursor: pointer;
+    animation-name: slide-right;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards; }
+
+@keyframes slide-right {
+  from {
+    transform: translateX(0); }
+  to {
+    transform: translateX(1rem); } }
+@keyframes slide-reverse {
+  from {
+    transform: translateX(1rem); }
+  to {
+    transform: translateX(0); } }
+.sub-nav__products-images {
+  flex-basis: 35%;
+  background-size: cover;
+  background-position: center;
+  transition: 0.2s; }
+
+.underlined:after {
+  display: block;
+  content: '';
+  border-bottom: 3px solid #4d4d4d;
+  animation-name: underline;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards; }
+
+@keyframes underline {
+  from {
+    transform: scaleX(0); }
+  to {
+    transform: scaleX(1); } }
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  color: #4d4d4d; }
+
+body {
+  background-color: #f4f4f4; }
+
+.uppercase {
+  text-transform: uppercase; }
+
+.headings-font {
+  font-family: "Russo One", sans-serif; }
+
+.hidden {
+  display: none; }
+
+/*# sourceMappingURL=main.css.map */

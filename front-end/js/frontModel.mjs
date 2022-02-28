@@ -15,6 +15,7 @@ export const createLeggings = function (leggings) {
         description: leggings.description,
         discount: leggings.discount,
         name: leggings.name,
+        item: leggings.item,
         price: leggings.price,
         quantities: leggings.quantities,
         sizeGuides: leggings.sizeGuides,
