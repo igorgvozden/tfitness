@@ -1,0 +1,149 @@
+.login-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-5rem);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.login-container__mask {
+    min-width: 100%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    
+    animation-name: slide-down;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.login-form {
+    padding: 2rem;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 300px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.login-container__close-btn {
+    font-size: 1.3rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: ease-in-out 0.2s;
+    
+    &:hover {
+        background-color: $close-button-color;
+        cursor: pointer;
+        box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+
+        animation-name: rotate-360;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    }
+}
+
+@keyframes rotate-360 {
+    from {
+        transform: rotate(90deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+.login-form__label {
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    position: relative;
+}
+
+.login-form__input {
+    padding: 0.5rem;
+    border-radius: 25px;
+    outline: none;
+    background-color: $backgroundColor;
+    box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+    border: none;
+    transition: ease-in-out 0.2s;
+
+    &:hover {
+        box-shadow: 1px 1px 3px $color-shadow-dark, -3px -3px 5px white;
+    }
+    &:focus {
+        box-shadow: 1px 1px 3px $color-shadow-dark, -3px -3px 5px white;
+    }
+}
+
+.login-form__password__eye {
+    width: 1.1rem;
+    height: 1.1rem;
+    font-size: 1.1rem;
+    position: absolute;
+    bottom: 0.8rem;
+    right: 1rem;
+    opacity: 0.7;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.login-form__element {
+    margin: 1.1rem 0;
+    box-sizing: border-box;
+    min-width: 100%;
+}
+
+.login-form__submit-button {
+    padding: 0.9rem;
+    border: none;
+    border-radius: 25px;
+    background-color: $fontColor;
+    color: white;
+    transition: 0.3s;
+    box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+
+    &:hover {
+        cursor: pointer;
+        background-color: lighten($color: $fontColor, $amount: 10%);
+    }
+}
+
+.login-form__links {
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.login-form__links--highlighted {
+    font-weight: 600;
+    transition: 0.2s ease;
+
+    &:hover {
+        cursor: pointer;
+        color: $font-colored-higlight;
+    }
+}

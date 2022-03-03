@@ -15,7 +15,7 @@
 
         <header class="header">
             <div class="header-container">
-                <nav class="nav header-container_nav">
+                <nav class="nav header-container_nav fixed">
 
                     <div class="nav header-container_nav_scroller">
                         <p class="nav-tabs__text">ovo je text koji ce da skrolla za neke info</p>
@@ -31,19 +31,19 @@
                                 data-choose-product="setovi">setovi</p>
                         </div>
                         <div class="navigation_buttons">
-                            <button class="nav__btn nav__btn--profile">
+                            <button class="nav__btn nav__btn--profile" type="button">
                                 <img class="nav__icon" src="./images/person-outline.svg" alt="Moj Profil" />
                             </button>
 
-                            <button class="nav__btn nav__btn--profile">
+                            <button class="nav__btn nav__btn--bookmark" type="button">
                                 <img class="nav__icon" src="./images/bookmark-outline.svg" alt="Sacuvaj" />
                             </button>
 
-                            <button class="nav__btn nav__btn--profile">
+                            <button class="nav__btn nav__btn--cart" type="button">
                                 <img class="nav__icon" src="./images/icon-bag.svg" alt="Korpa" />
                             </button>
 
-                            <button class="nav__btn nav__btn--profile">
+                            <button class="nav__btn nav__btn--admin-panel" type="button">
                                 <img class="nav__icon" src="./images/create-outline.svg" alt="Admin Panel" />
                             </button>
                         </div>
@@ -65,6 +65,68 @@
             </div>
 
         </header>
+
+        <div class="login-container hidden">
+            <!-- <div class="login-container__mask">
+                <form class="login-form">
+                    <h4 class="uppercase headings-font login-form__element">uloguj se u svoj profil</h4>
+                    <label class="login-form__label login-form__element">Email adresa:
+                        <input class="login-form__input" type="email" name="email"
+                            placeholder="Unesi svoju e-mail adresu" />
+                    </label>
+                    <label class="login-form__label login-form__element">Lozinka:
+                        <input class="login-form__input" type="password" name="password"
+                            placeholder="Unesi svoju lozinku" />
+                        <span class="login-form__password__eye">
+                            <img src="./images/eye-on.svg" />
+                        </span>
+                    </label>
+                    <p class="login-form__element login-form__links login-form__links--highlighted">Ne secas se svoje
+                        lozinke?</p>
+                    <button class="login-form__submit-button uppercase headings-font login-form__element"
+                        type="submit">Uloguj
+                        se</button>
+                    <p class="login-form__element login-form__links">Nemas profil? <span
+                            class="login-form__links--highlighted login-form__switch-btn" data-switch-to="login">Registruj se!</span></p>
+                </form>
+            </div> -->
+
+            <!-- <div class="login-container__mask">
+                <form class="login-form">
+                    <h4 class="uppercase headings-font login-form__element">registruj se</h4>
+                    <label class="login-form__label login-form__element">Napisi nam tvoje ime:
+                        <input class="login-form__input" type="text" name="name" placeholder="npr. Jana Jovanovic" />
+                    </label>
+                    <label class="login-form__label login-form__element">Email adresa:
+                        <input class="login-form__input" type="email" name="email"
+                            placeholder="Unesi svoju e-mail adresu" />
+                    </label>
+                    <label class="login-form__label login-form__element">Lozinka:
+                        <input class="login-form__input" type="password" name="password"
+                            placeholder="Unesi svoju lozinku" />
+                        <span class="login-form__password__eye">
+                            <img src="./images/eye-on.svg" />
+                        </span>
+                    </label>
+                    <label class="login-form__label login-form__element">Potvrdi Lozinku:
+                        <input class="login-form__input" type="password" name="confirmPassword"
+                            placeholder="Unesi svoju lozinku" />
+                        <span class="login-form__password__eye">
+                            <img src="./images/eye-on.svg" />
+                        </span>
+                    </label>
+
+                    <p class="login-form__element login-form__links login-form__links--highlighted">Registruj se da
+                        ostvaris popuste!</p>
+                    <button class="login-form__submit-button uppercase headings-font login-form__element"
+                        type="submit">registruj
+                        se</button>
+                    <p class="login-form__element login-form__links">Vec imas profil?
+                        <span class="login-form__links--highlighted login-form__switch-btn" data-switch-to="login">Uloguj se!</span>
+                    </p>
+                </form>
+            </div> -->
+        </div>
 
     </div>
 </body>

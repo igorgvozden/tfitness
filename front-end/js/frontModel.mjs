@@ -1,5 +1,30 @@
+///////////// STATE ZA KORISNIKA
 
+export const userState = {
 
+};
+
+export const createUser = function (data) {
+    return {
+        email: data.email,
+        name: data.name,
+        postal: data.postal,
+        city: data.city,
+        address: data.address,
+        telephone: data.telephone,
+        id: data.id,
+        adminPanelUrl: data.adminPanelUrl
+    };
+};
+
+export const createUserStateObj = function (resData) {
+    const { user } = resData.data;
+    userState.user = new Object(createUser(user));
+    console.log('User State:', userState);
+};
+
+//////////////////////////////
+//////////// STATE ZA PROIZVODE
 
 export const leggingsState = {
     results: null,
@@ -58,3 +83,4 @@ export const deleteBookmark = function () {
 export const clearAllBookmarks = function () {
     localStorage.clear('leggingsBookmarks');
 };
+///////////////////////////////

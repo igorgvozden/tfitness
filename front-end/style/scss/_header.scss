@@ -1,5 +1,5 @@
 .header {
-   position: relative;
+//    position: relative;
    min-width: 100%;
 }
 
@@ -18,7 +18,7 @@
     padding: 1rem 2rem;
     box-sizing: border-box;
     min-width: 75%;
-    position: fixed;
+    // position: fixed;
     z-index: 5;
 }
 
@@ -38,6 +38,13 @@
 
 .navigation_buttons {
     margin-left: auto;
+    border-radius: 25px;
+    border: none;
+    transition: ease-in-out 0.2s;
+
+    &:hover {
+        box-shadow: 1px 1px 3px $color-shadow-dark, -3px -3px 5px white; /////////////////
+    }
 }
 
 .nav-tabs__text--products {
@@ -50,15 +57,21 @@
 }
 
 .nav__btn {
-    margin: 0 0.3rem;
+    padding: 0 0.3rem;
     background: none;
     border: none;
+    border-radius: 25px;
     min-height: 1.5rem;
     min-width: 1.5rem;
+    transition: all 0.2s linear;
+    &:hover {
+        cursor: pointer;
+        box-shadow: 3px 3px 5px $color-shadow-dark, -1px -1px 3px white;
+    }
 }
 
 .nav__icon {
-    min-height: 100%;
+    min-height: 1.5rem;
 }
 
 //SUBNAV
@@ -68,7 +81,7 @@
     min-height: 25rem;
     background-color: rgba(255, 255, 255, 0.8);
     transition: 0.3s;
-    transform: translateY(-100%);
+    transform: translateY(-100vh);
     z-index: 6;
 }
 

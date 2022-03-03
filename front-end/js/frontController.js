@@ -1,6 +1,7 @@
 import { API_URL } from '../frontConfig.js';
 import * as model from './frontModel.mjs';
 import navbarView from './../views/navbarView.mjs';
+import loginView from '../views/loginView.mjs';
 
 console.log('we are live 1', API_URL);
 
@@ -47,9 +48,7 @@ const korisnik = {
     // city: "ns"
 };
 
-let logovani;
-
-let login = async function () {
+const login = async function () {
     try {
         // 1) fetch artikle iz DB
         const response = await fetch(`${API_URL}/users/login`, {
@@ -60,26 +59,21 @@ let login = async function () {
                 'Content-Type': 'application/json'
             },
             redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(korisnik)
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(korisnik) ////////////////////
         });
         let data = await response.json();
 
-        console.log(data.data.user)
+        // 2) proveri da li postoji odgovor sa servera
+        if (!data) throw new Error;
 
-        logovani = data.data.user;
-
-
-        // 2) proveri da li su artikli dostupni sa servera
-        // if (!data || data.results === 0) throw new Error;
-
-        // 3) update leggingsState podacima koje si fetchovao sa DB
-        // model.createLeggingsStateObj(data);
+        // 3) update userState podacima koje si fetchovao sa DB
+        model.createUserStateObj(data);
 
     } catch (error) {
         console.log('ooopssss', error);
-        throw error;
-    }
+        // throw error;
+    };
 };
 
 ///////// HANDLER FUNKCIJE
@@ -93,13 +87,40 @@ const handleNavbarView = async function () {
         navbarView.initialize(model.leggingsState);
     } catch (error) {
         console.log(error);
-    }
-}
+    };
+};
 
+const handleLoginView = async function () {
+    try {
+        // 1) proveri da li postoji ulogovan korisnik
+        await login(); // privremeno je ovde da lazira korisnika
+
+        if (!model.userState.user) return;
+
+        // 2) ako postoji, initcijalizuj loginView podacima iz model.userState
+        loginView.initialize(model.userState);
+        console.log(loginView)
+        console.log('handler za loginView');
+    } catch (error) {
+        console.log(error);
+    };
+};
+
+const handleProfileIconClick = function () {
+    loginView.showLoginView();
+};
+
+const handleFormCloseButtonClick = function () {
+    navbarView.removeNavFixedPosition();
+};
 
 /////////
 
 const init = function () {
     navbarView.addHandlerInitialize(handleNavbarView);
+    // getUsers();
+    loginView.addHandlerrender(handleLoginView);
+    navbarView.addHandlerloginIconClick(handleProfileIconClick);
+    loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
 };
 init();

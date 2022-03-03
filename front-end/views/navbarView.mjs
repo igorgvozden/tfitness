@@ -3,6 +3,7 @@ import View from './view.mjs';
 class NavbarView extends View {
     _data;
     _parentElement = document.querySelector('.header-container');
+    _nav = document.querySelector('.header-container_nav');
     _subnavView = document.querySelector('.header-container_sub-nav');
 
     addHandlerInitialize(handler) {
@@ -12,6 +13,28 @@ class NavbarView extends View {
         handler();
     };
 
+    // NAV ICONS 
+
+    // 1) proveri da li postoji model.stateUser i da li je admin
+
+    // 2) ako postoji, renderuj ikonicu za admin panel
+
+    // 3) proveri da li je i dalje ulogovan
+
+
+    // handler za login ikonicu koji ce controller da poveze sa loginView
+    addHandlerloginIconClick(handler) {
+        this._parentElement.addEventListener('click', (e) => {
+            const iconBtn = e.target.closest('.nav__btn--profile');
+            if (!iconBtn) return;
+            this.removeNavFixedPosition();
+            handler();
+        });
+    };
+
+    removeNavFixedPosition() {
+        this._nav.classList.toggle('fixed');
+    }
 
     // SUBNAV 
     _renderSubnavData(selectedItems) {
@@ -49,7 +72,6 @@ class NavbarView extends View {
             const imageName = product.dataset['collection'];
             this._subnavLoadImages(imageName);
             e.stopImmediatePropagation(); // ovo ce mozda praviti problem kasnije, obrati paznju...ovde samo stopiram bubbling da ne bi za svaki element nastavljao
-            console.log(product.dataset['collection']);
         });
     };
 
@@ -64,11 +86,11 @@ class NavbarView extends View {
     };
 
     _subnavShow() {
-        this._subnavView.style.transform = 'translateY(0%)';
+        this._subnavView.style.transform = 'translateY(0vh)'; //////////////////
     };
 
     _subnavHide() {
-        this._subnavView.style.transform = 'translateY(-100%)';
+        this._subnavView.style.transform = 'translateY(-100vh)'; ////////////////
         this._subnavRemoveImage();
     };
 

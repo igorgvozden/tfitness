@@ -1,6 +1,7 @@
 @import './colors';
 @import './fonts';
 @import './header';
+@import './login';
 
 * {
     margin: 0;
@@ -14,12 +15,20 @@ body {
     background-color: $backgroundColor;
 }
 
+.container {
+    position: relative;
+}
+
 .uppercase {
     text-transform: uppercase;
 }
 
 .headings-font {
     font-family: $font-titles;
+}
+
+.fixed {
+    position: fixed;
 }
 
 .hidden {
