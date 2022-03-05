@@ -25,7 +25,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.3s ease-in-out;
     
     animation-name: slide-down;
     animation-duration: 0.3s;
@@ -73,7 +72,64 @@
     }
 }
 
-.login-form__label {
+// USER PANEL
+
+.login-container__user-panel {
+    padding: 2rem;
+    box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+    background-color: rgba(255, 255, 255, 0.514);
+    border-radius: 20px;
+    display: flex;
+    position: relative;
+}
+
+.user-panel__form {
+    min-width: 300px;
+}
+
+.user-panel__user-avatar {
+    padding: 2rem;
+    min-width: 300px;
+    min-height: 300px;
+}
+
+.user-panel__user-avatar__picture {
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(rgb(14, 245, 253), rgb(139, 31, 228));
+}
+
+.user-panel__user-avatar__name-initials {
+    font-size: 8rem;
+    color: white;
+}
+
+.user-panel__user-avatar__name {
+    text-align: center;
+}
+
+.user-panel__form__edit-profile {
+    margin-top: 0.2rem;
+    padding: 0.3rem;
+    width: max-content;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    &:hover {
+        cursor: pointer;
+        color: $font-colored-higlight;
+    }
+}
+
+// USER PANEL LOGIN FORM COMMON ELEMENTS
+
+.login-form__label,
+.user-panel-form__label {
     font-size: 0.9rem;
     display: flex;
     flex-direction: column;
@@ -81,7 +137,14 @@
     position: relative;
 }
 
-.login-form__input {
+.login-form__label__span {
+    color: red;
+    font-size: 0.8rem;
+    transform: translateY(-50%);
+}
+
+.login-form__input,
+.user-panel-form__input {
     padding: 0.5rem;
     border-radius: 25px;
     outline: none;
@@ -112,13 +175,15 @@
     }
 }
 
-.login-form__element {
+.login-form__element,
+.user-panel-form__element {
     margin: 1.1rem 0;
     box-sizing: border-box;
     min-width: 100%;
 }
 
-.login-form__submit-button {
+.login-form__submit-button,
+.user-panel__submit-button {
     padding: 0.9rem;
     border: none;
     border-radius: 25px;
@@ -147,3 +212,5 @@
         color: $font-colored-higlight;
     }
 }
+
+

@@ -1,4 +1,5 @@
 import View from './view.mjs';
+import { API_URL } from '../frontConfig.js';
 
 class NavbarView extends View {
     _data;
@@ -33,6 +34,8 @@ class NavbarView extends View {
     };
 
     removeNavFixedPosition() {
+        this._parentElement.classList.toggle('blured');
+        // this._nav.classList.toggle('blured');
         this._nav.classList.toggle('fixed');
     }
 
@@ -77,7 +80,7 @@ class NavbarView extends View {
 
     _subnavLoadImages(whichImage) {
         const imageDisplay = document.querySelector('.sub-nav__products-images');
-        imageDisplay.style.backgroundImage = `url(http://localhost:3000/${whichImage.replace(' ', '-')}.png)`;
+        imageDisplay.style.backgroundImage = `url(${API_URL}/${whichImage.replace(' ', '-')}.png)`;
     };
 
     _subnavRemoveImage() {

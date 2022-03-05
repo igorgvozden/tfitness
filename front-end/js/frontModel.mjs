@@ -1,6 +1,13 @@
 ///////////// STATE ZA KORISNIKA
 
+// state za ulogovanog korisnika
 export const userState = {
+
+};
+
+
+// podaci za login/register attempt
+export const currentUser = {
 
 };
 
@@ -21,6 +28,10 @@ export const createUserStateObj = function (resData) {
     const { user } = resData.data;
     userState.user = new Object(createUser(user));
     console.log('User State:', userState);
+};
+
+export const createCurrentUser = function (data) {
+
 };
 
 //////////////////////////////

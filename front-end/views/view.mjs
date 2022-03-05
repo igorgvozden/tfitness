@@ -12,16 +12,15 @@ export default class View {
         this._data = data;
     };
 
-    renderSpinner(element) {
+    renderSpinner(element, template) {
         const markup =
             `<div class="spinner">
-                <svg>
-                <use href="${icons}.svg#icon-loader"></use>
-                </svg>
+                spiner
             </div>`;
 
-        this._clear();
-        element.insertAdjacentHTML('afterbegin', markup);
+        element.innerHTML = '';
+        template ? element.insertAdjacentHTML('afterbegin', template) : element.insertAdjacentHTML('afterbegin', markup);
+        // element.insertAdjacentHTML('afterbegin', markup);
     };
 
     _clear() {
@@ -32,11 +31,8 @@ export default class View {
         const markup = `
       <div class="error">
         <div>
-            <svg>
-                <use href="${icons}#icon-alert-triangle"></use>
-            </svg>
+            <p>${message}</p>    
         </div>
-      <p>${message}</p>
       </div>`;
 
         this._clear();

@@ -76,6 +76,66 @@ const login = async function () {
     };
 };
 
+const loginFromData = async function (dataOfForm) {
+    try {
+        // 1) renderuj spinner na zadatom elementu
+        const formSubmitBtn = document.querySelector('.login-form__submit-button');
+        loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
+
+        const response = await fetch(`${API_URL}/users/login`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(dataOfForm)
+        });
+        let data = await response.json();
+        console.log(data);
+
+        // 2) proveri sta je odgovor sa servera i ispisi res.message u submit dugmetu
+        loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Ulogovani ste!'}`);
+
+    } catch (error) {
+        console.log(error);
+        loginView.renderSpinner(formSubmitBtn, `${error.message}`);
+    }
+};
+
+const registerFromData = async function (dataOfForm) {
+    try {
+        // 1) renderuj spinner na zadatom elementu
+        const formSubmitBtn = document.querySelector('.login-form__submit-button');
+        loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
+
+        const response = await fetch(`${API_URL}/users/signup`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(dataOfForm)
+        });
+        let data = await response.json();
+        console.log(data);
+
+        // 2) proveri sta je odgovor sa servera i ispisi res.message u submit dugmetu
+        loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Registrovani ste!'}`);
+
+    } catch (error) {
+        console.log(error);
+        loginView.renderSpinner(formSubmitBtn, `${error.message}`);
+    }
+};
+
+
+
 ///////// HANDLER FUNKCIJE
 
 const handleNavbarView = async function () {
@@ -94,13 +154,20 @@ const handleLoginView = async function () {
     try {
         // 1) proveri da li postoji ulogovan korisnik
         await login(); // privremeno je ovde da lazira korisnika
+        if (model.userState.user) {
+            console.log('korisnik je ulogovan', model.userState.user.name);
 
-        if (!model.userState.user) return;
+            // 2) ako postoji, initcijalizuj loginView podacima iz model.userState
+            loginView.initialize(model.userState);
+            console.log(loginView);
+            return true;
+        };
 
-        // 2) ako postoji, initcijalizuj loginView podacima iz model.userState
-        loginView.initialize(model.userState);
-        console.log(loginView)
-        console.log('handler za loginView');
+        // 3) ako korisnik ne postoji/nije ulogovan
+        if (!model.userState.user) {
+            console.log('korisnik nije ulogovan');
+            return false;
+        }
     } catch (error) {
         console.log(error);
     };
@@ -118,9 +185,8 @@ const handleFormCloseButtonClick = function () {
 
 const init = function () {
     navbarView.addHandlerInitialize(handleNavbarView);
-    // getUsers();
-    loginView.addHandlerrender(handleLoginView);
     navbarView.addHandlerloginIconClick(handleProfileIconClick);
+    loginView.addHandlerrender(handleLoginView);
     loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
 };
 init();
