@@ -56,10 +56,13 @@ const login = async function () {
             mode: 'cors',
             cache: 'no-cache',
             headers: {
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Origin': `${API_URL}/users/login`,
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer',
+            // referrerPolicy: 'no-referrer',
             body: JSON.stringify(korisnik) ////////////////////
         });
         let data = await response.json();
@@ -78,6 +81,7 @@ const login = async function () {
 
 const loginFromData = async function (dataOfForm) {
     try {
+        console.log('inside login handler')
         // 1) renderuj spinner na zadatom elementu
         const formSubmitBtn = document.querySelector('.login-form__submit-button');
         loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
@@ -87,8 +91,11 @@ const loginFromData = async function (dataOfForm) {
             mode: 'cors',
             cache: 'no-cache',
             headers: {
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Origin': `${API_URL}/users/login`,
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer',
             body: JSON.stringify(dataOfForm)
@@ -116,8 +123,11 @@ const registerFromData = async function (dataOfForm) {
             mode: 'cors',
             cache: 'no-cache',
             headers: {
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Origin': `${API_URL}/users/login`,
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer',
             body: JSON.stringify(dataOfForm)
@@ -137,6 +147,25 @@ const registerFromData = async function (dataOfForm) {
 
 
 ///////// HANDLER FUNKCIJE
+const loggerHandler = async (data) => {
+    try {
+        // 1) proveri da su prosledjeni podaci
+        if (!data) return;
+        console.log('logger handler', data);
+
+        // 2) ako je prosledjen LOGIN, a) prosledi podatke na server login rutu, b) upisi response u user state, c) skloni login formu
+        if (data.action === 'login') loginFromData(data);
+
+        // 3) ako je prosledjen REGISTER, a) prosledi na register rutu, b) uloguj korisnika/upisi ga u user state, c) skloni register formu
+        if (data.action === 'register') registerFromData(data);
+
+        // 4) ako je prosledjen UPDATE, a) prosledi na patch rutu, b) upisi korisnika u user state, c) update user panel
+
+    } catch (error) {
+        console.log(error)
+    };
+};
+
 
 const handleNavbarView = async function () {
     try {
@@ -153,7 +182,7 @@ const handleNavbarView = async function () {
 const handleLoginView = async function () {
     try {
         // 1) proveri da li postoji ulogovan korisnik
-        await login(); // privremeno je ovde da lazira korisnika
+        // await login(); // privremeno je ovde da lazira korisnika
         if (model.userState.user) {
             console.log('korisnik je ulogovan', model.userState.user.name);
 
@@ -184,9 +213,13 @@ const handleFormCloseButtonClick = function () {
 /////////
 
 const init = function () {
+    // inicijalizacija navbara
     navbarView.addHandlerInitialize(handleNavbarView);
     navbarView.addHandlerloginIconClick(handleProfileIconClick);
+    // prikaz login/register forme na click
     loginView.addHandlerrender(handleLoginView);
     loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
+    // login/register
+    loginView.addLoginHandler(loggerHandler);
 };
 init();

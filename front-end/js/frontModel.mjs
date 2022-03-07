@@ -5,12 +5,6 @@ export const userState = {
 
 };
 
-
-// podaci za login/register attempt
-export const currentUser = {
-
-};
-
 export const createUser = function (data) {
     return {
         email: data.email,
@@ -30,8 +24,25 @@ export const createUserStateObj = function (resData) {
     console.log('User State:', userState);
 };
 
-export const createCurrentUser = function (data) {
+////////////////////////////////////
+// state za login/register attempt
+export const possibleUser = {
 
+};
+
+export const createPossibleUserObj = function (currentData) {
+    console.log(currentData)
+    const { user } = currentData;
+    possibleUser = new Object(createPossibleUser(user));
+    console.log('current User:', possibleUser);
+};
+
+export const createPossibleUser = function (data) {
+    console.log(data)
+    return {
+        email: data.email,
+        password: data.password
+    };
 };
 
 //////////////////////////////

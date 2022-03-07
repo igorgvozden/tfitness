@@ -10,22 +10,22 @@ const userSchema = new mongoose.Schema({
     },
     postal: {
         type: String,
-        required: [true, 'Unesite postanski broj'],
+        // required: [true, 'Unesite postanski broj'],
         min: [5, 'Postanski broj mora imati 5 brojeva'],
         max: [5, 'Postanski broj mora imati 5 brojeva'],
         trim: true
     },
     city: {
         type: String,
-        required: [true, 'Unesite ime vaseg mesta. Na primer: Kragujevac']
+        // required: [true, 'Unesite ime vaseg mesta. Na primer: Kragujevac']
     },
     address: {
         type: String,
-        required: [true, 'Unesite adresu! Na primer: Bulevar Oslobodjenja 16/c/9'],
+        // required: [true, 'Unesite adresu! Na primer: Bulevar Oslobodjenja 16/c/9'],
     },
     telephone: {
         type: String,
-        required: [true, 'Unesite broj telefona!']
+        // required: [true, 'Unesite broj telefona!']
     },
     password: {
         type: String,

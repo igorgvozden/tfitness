@@ -31,19 +31,9 @@ class LoginView extends View {
         });
     };
 
-    addCreateLoginAttempt(handler) {
-        // 1) pokupi podatke iz login forme
-        const credentials = this._collectFormData();
-        // 2) prosledi podatke na model.currentUser
-        handler(credentials);
-    };
 
     addLoginHandler(handler) {
-
-    };
-
-    addRegisterHandler(handler) {
-
+        this._collectFormData(handler);
     };
 
     showLoginView() {
@@ -73,28 +63,33 @@ class LoginView extends View {
 
 
     // 4) prikupljanje podataka iz forme
-    _collectFormData() {
-        const userForm = document.querySelector('.login-form');
+    _collectFormData(handler) {
+        // const userForm = document.querySelector('.login-form');
         const informationSpans = document.querySelectorAll('.login-form__label__span');
 
-        userForm.addEventListener('submit', function (e) {
+        this._parentElement.addEventListener('submit', (e) => {
+            const form = e.target.closest('.login-form');
             e.preventDefault();
-            const dataArray = [...new FormData(this)];
+            const dataArray = [...new FormData(form)];
             const userData = Object.fromEntries(dataArray);
-            console.log(userData);
+            userData.action = form.dataset['action'];
 
             // proveri form inpute - da li su svi popunjeni
 
             for (const entrie of Object.entries(userData)) {
+                // validator ide ovde
                 for (const span of informationSpans) {
-                    if (span.dataset['errSpan'] === entrie[0] && entrie[1].length < 1) span.innerHTML = 'Polje ne može biti prazno';
+                    if (span.dataset['errSpan'] === entrie[0] && entrie[1].length < 1) span.innerHTML = 'Polje ne može biti prazno'; // validator is false
                     if (span.dataset['errSpan'] === entrie[0] && entrie[1].length > 1) span.innerHTML = '';
                 };
+                // if !validator return
             };
+            if (!handler) return;
+            handler(userData);
         });
 
         // proveri inpute nakon unosa da li je input ostao prazan
-        userForm.addEventListener('input', (e) => {
+        this._parentElement.addEventListener('input', (e) => {
             const formInput = e.target.closest('.login-form__input');
             if (!formInput) return;
 
@@ -103,6 +98,7 @@ class LoginView extends View {
                 if (span.dataset['errSpan'] === formInput.name && formInput.value.length >= 1) span.innerHTML = '';
             };
         });
+
     };
 
     _populateUserPanelForm() {
@@ -125,11 +121,11 @@ class LoginView extends View {
     _generateLogin() {
         return `
         <div class="login-container__mask">
-        <form class="login-form">
+        <form class="login-form" data-action="login">
         <p class="login-container__close-btn">&#10006;</p>
             <h4 class="uppercase headings-font login-form__element">uloguj se u svoj profil</h4>
             <label class="login-form__label login-form__element">Email adresa:
-                <input class="login-form__input" type="email" name="email"
+                <input class="login-form__input" type="text" name="email"
                     placeholder="Unesi svoju e-mail adresu" />
             </label>
             
@@ -162,7 +158,7 @@ class LoginView extends View {
     _generateRegister() {
         return `
         <div class="login-container__mask">
-                <form class="login-form">
+                <form class="login-form" data-action="register">
                 <p class="login-container__close-btn">&#10006;</p>
                     <h4 class="uppercase headings-font login-form__element">registruj se</h4>
                     <label class="login-form__label login-form__element">Napisi nam svoje ime:
@@ -172,7 +168,7 @@ class LoginView extends View {
                     <span class="login-form__label__span" data-err-span="name"></span>
 
                     <label class="login-form__label login-form__element">Email adresa:
-                        <input class="login-form__input" type="email" name="email"
+                        <input class="login-form__input" type="text" name="email"
                             placeholder="Unesi svoju e-mail adresu" />
                     </label>
 

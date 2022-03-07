@@ -37,7 +37,7 @@ const createAndSendCookie = (user, responseCode, res) => {
 
 exports.protect = async (req, res, next) => {
     try {
-        let token;
+        let token = '';
 
         // 1) pogledaj ima li korisnik token
 
@@ -80,15 +80,29 @@ exports.restrictTo = async (req, res, next) => {
 
 exports.signUp = async (req, res, next) => {
     try {
+        const { name, email, password, confirmPassword, telephone, address, postal, city } = req.body;
+
+        // 1) da li su popunjena sva polja
+        if (!name || !email || !password || !confirmPassword) {
+            return next(new AppError('Popunite sva polja', 400));
+        };
+
+        // 2) da li je password jednak confirm password
+        if (password !== confirmPassword) return next(new AppError('Lozinka i Potvrda Lozinke nisu iste'));
+
+        // 3) da li je email unikatan
+        const userEmail = await User.findOne({ email });
+        if (userEmail) return next(new AppError('Email vec postoji', 500));
+
         const newUser = await User.create({
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password,
-            confirmPassword: req.body.confirmPassword,
-            telephone: req.body.telephone,
-            address: req.body.address,
-            postal: req.body.postal,
-            city: req.body.city
+            name,
+            email,
+            password,
+            confirmPassword,
+            // telephone,
+            // address,
+            // postal,
+            // city
         });
 
         // const token = signToken(newUser._id);
