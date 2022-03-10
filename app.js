@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 // MIDDLEWARES
-
+app.use(cookieParser());
 app.use(cors({
     credentials: true,
     origin: ['http://127.0.0.1:3000', 'http://127.0.0.1:5500'] // [server-adresa, production-adresa]
@@ -32,7 +32,7 @@ app.use(limiter);
 
 // daje mogucnost da citas req.body info u json formatu
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 // blokira NoSQL query injections > npr {"$gt": {""}} // skida sve dollar signe sa unosa
 app.use(mongoSanitize());
@@ -50,7 +50,7 @@ app.use('/', leggingsRouter);
 app.use((req, res, next) => {
     console.log(req.cookies);
     next();
-})
+});
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Nepostojeca adresa: ${req.originalUrl}`, 404));

@@ -73,6 +73,57 @@ exports.protect = async (req, res, next) => {
     };
 };
 
+exports.isLoggedIn = async (req, res, next) => {
+    try {
+        let token = '';
+
+        if (req.headers.cookie && req.headers.cookie.startsWith('jwt')) {
+            token = req.headers.cookie.split('=')[1];
+
+            if (!token) return next();
+
+            // 2) verifikacija tokena
+            const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+
+            // 3) da li korisnik postoji u db
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) return next(new AppError('Korisnik vise ne postoji!', 401));
+
+            // 4) da li je korisnik promenio password nakon sto je dobio svoj jwt token
+
+            if (currentUser.changedPassword(decoded.iat)) {
+                return next(new AppError('Lozinka je promenjena. Ulogujte se ponovo!', 401));
+            };
+
+            //////////
+            res.locals.user = currentUser; // locals je kontejner za varijable koje ce u ovom slucaju da se storuju samo na responsu(posoji i app.locals vidi doc)
+
+            return next();
+        };
+        next();
+    } catch (err) {
+        console.log(err);
+        next();
+    };
+};
+
+exports.logout = async function (req, res, next) {
+    try {
+        res.cookie('jwt', '', {
+            expires: new Date(Date.now()),
+            // secure: true, // samo u produkciji je true, inace nece raditi zbog https
+            httpOnly: true
+        });
+
+        res.send({
+            status: 'success',
+            message: 'Izlogovani ste!'
+        });
+    } catch (error) {
+        next(new AppError('Oooppps, doslo je do greske! probajte ponovo', 500));
+    };
+};
+
 exports.restrictTo = async (req, res, next) => {
     if (!req.user.admin) return next(new AppError('Pristup nije dozvoljen', 403));
     next();

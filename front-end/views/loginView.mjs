@@ -31,9 +31,18 @@ class LoginView extends View {
         });
     };
 
-
     addLoginHandler(handler) {
         this._collectFormData(handler);
+    };
+
+    addLogoutHandler(handler) {
+        this._parentElement.addEventListener('click', (e) => {
+            const logoutBtn = e.target.closest('.user-panel__btn--logout');
+            if (!logoutBtn) return;
+
+            console.log('logging out', document.cookie);
+            handler();
+        });
     };
 
     showLoginView() {
@@ -238,7 +247,7 @@ class LoginView extends View {
                             <button class="login-form__submit-button uppercase headings-font login-form__element"
                                 type="submit">sacuvaj promene</button>
                         </form>
-                        <p class="user-panel__form__edit-profile">Izloguj se</p>
+                        <p class="user-panel__form__edit-profile user-panel__btn--logout">Izloguj se</p>
                         <p class="user-panel__form__edit-profile">Obriši profil</p>
                     </div>
 

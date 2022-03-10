@@ -4,6 +4,8 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+router.use(authController.isLoggedIn);
+
 router.route('/')
     .get(leggingsController.getAllLeggings)
     .post(authController.protect, authController.restrictTo, leggingsController.createLegging);

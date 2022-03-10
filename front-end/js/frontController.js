@@ -5,13 +5,14 @@ import loginView from '../views/loginView.mjs';
 
 console.log('we are live 1', API_URL);
 
-let getData = async function () {
+const getData = async function () {
     try {
         // 1) fetch artikle iz DB
         const response = await fetch(API_URL, {
             method: 'GET',
             mode: 'cors',
             cache: 'no-cache',
+            credentials: 'include', // mora da postoji ovde da bi req poslao cookie
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -24,6 +25,15 @@ let getData = async function () {
 
         // 3) update leggingsState podacima koje si fetchovao sa DB
         model.createLeggingsStateObj(data);
+
+        // 4) proveri da li postoji ulogovan korisnik, response.locals prosledjuje: data.user
+        if (!data.user) return;
+        model.createUserStateObj(data.user);
+
+        // 5) renderuj user panel za ulogovanog korisnika
+        loginView.addHandlerrender(handleLoginView);
+        loginView.addLogoutHandler(logout);
+
     } catch (error) {
         console.log('ooopssss', error);
         throw error;
@@ -106,6 +116,13 @@ const loginFromData = async function (dataOfForm) {
         // 2) proveri sta je odgovor sa servera i ispisi res.message u submit dugmetu
         loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Ulogovani ste!'}`);
 
+        // 3) upisi ulogovanog korisnika u user.state
+        if (data.status === 'success') {
+            model.createUserStateObj(data);
+            // reload stranicu ako je korisnik ulogovan
+            reloadPage(1000);
+        };
+
     } catch (error) {
         console.log(error);
         loginView.renderSpinner(formSubmitBtn, `${error.message}`);
@@ -144,7 +161,31 @@ const registerFromData = async function (dataOfForm) {
     }
 };
 
+const logout = async function () {
+    try {
+        const formSubmitBtn = document.querySelector('.login-form__submit-button');
+        loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
 
+        const response = await fetch(`${API_URL}/users/logout`, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'include', // mora da postoji ovde da bi req poslao cookie
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        let data = await response.json();
+
+        console.log(data, 'logout');
+        if (data.status === 'success') {
+            reloadPage(1000);
+            loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Ulogovani ste!'}`);
+        };
+    } catch (error) {
+        console.log(error);
+    };
+};
 
 ///////// HANDLER FUNKCIJE
 const loggerHandler = async (data) => {
@@ -210,9 +251,14 @@ const handleFormCloseButtonClick = function () {
     navbarView.removeNavFixedPosition();
 };
 
+const reloadPage = function (miliseconds = 1000) {
+    window.setTimeout(() => location.reload(), miliseconds);
+};
+
 /////////
 
 const init = function () {
+    console.log(model.userState)
     // inicijalizacija navbara
     navbarView.addHandlerInitialize(handleNavbarView);
     navbarView.addHandlerloginIconClick(handleProfileIconClick);

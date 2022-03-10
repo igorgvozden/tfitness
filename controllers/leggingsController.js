@@ -8,6 +8,7 @@ exports.getAllLeggings = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             results: allLeggigns.length,
+            user: res.locals.user, // authcontroller.isLoggedIn middleware prosledjuje ovog korisnika ako je ulogovan tj ako postoji cookie kod klijenta
             data: {
                 leggings: allLeggigns
             }

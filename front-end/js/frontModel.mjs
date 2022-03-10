@@ -1,7 +1,7 @@
 ///////////// STATE ZA KORISNIKA
 
 // state za ulogovanog korisnika
-export const userState = {
+export let userState = {
 
 };
 
@@ -19,8 +19,7 @@ export const createUser = function (data) {
 };
 
 export const createUserStateObj = function (resData) {
-    const { user } = resData.data;
-    userState.user = new Object(createUser(user));
+    userState.user = new Object(createUser(resData)); /////
     console.log('User State:', userState);
 };
 

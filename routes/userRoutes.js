@@ -4,8 +4,12 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+router.use(authController.isLoggedIn); // provera da li postoji korisnik sa jwt cookiem
+
 router.route('/')
     .get(authController.protect, authController.restrictTo, userController.getAllUsers);
+
+router.route('/logout').get(authController.logout);
 
 router.post('/signup', authController.signUp);
 router.post('/login', authController.login);
