@@ -1,3 +1,4 @@
+import { API_URL } from '../frontConfig.js';
 import View from './view.mjs';
 
 class LoginView extends View {
@@ -31,25 +32,32 @@ class LoginView extends View {
         });
     };
 
+    // login/register 
     addLoginHandler(handler) {
         this._collectFormData(handler);
+        this._eyePasswordIcon();
     };
 
+    // log out korisnika
     addLogoutHandler(handler) {
         this._parentElement.addEventListener('click', (e) => {
             const logoutBtn = e.target.closest('.user-panel__btn--logout');
             if (!logoutBtn) return;
-
-            console.log('logging out', document.cookie);
             handler();
         });
     };
 
+    // update korisnickih informacija
+    addUpdateUserHandler(handler) {
+        this._collectFormData(handler);
+    };
+
+    // otvara i zatvara login/register/user panel 
     showLoginView() {
         this._parentElement.classList.toggle('hidden');
     };
 
-    // 1) event listener za login/register form view switch
+    // event listener za login/register form view switch
     _loginRegisterSwitch() {
         this._parentElement.addEventListener('click', (e) => {
             const switchBtn = e.target.closest('.login-form__switch-btn');
@@ -70,8 +78,24 @@ class LoginView extends View {
         // this._collectFormData(); // collectFormData mora da ostane ovde da bi se pokrenula svaki put funkcija provere forme na switchu login/register
     };
 
+    // menja PASSWORD input type(text/password) u formi 
+    _eyePasswordIcon() {
+        this._parentElement.addEventListener('click', (e) => {
+            const eyeIcon = e.target.closest('.login-form__password__eye-icon');
+            if (!eyeIcon) return;
+            const passInput = eyeIcon.parentElement.previousElementSibling;
 
-    // 4) prikupljanje podataka iz forme
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.src = `${API_URL}/eye-off.svg`;
+            } else if (passInput.type === 'text') {
+                passInput.type = 'password';
+                eyeIcon.src = `${API_URL}/eye-on.svg`;
+            };
+        });
+    };
+
+    // prikupljanje podataka iz forme
     _collectFormData(handler) {
         // const userForm = document.querySelector('.login-form');
         const informationSpans = document.querySelectorAll('.login-form__label__span');
@@ -86,12 +110,10 @@ class LoginView extends View {
             // proveri form inpute - da li su svi popunjeni
 
             for (const entrie of Object.entries(userData)) {
-                // validator ide ovde
                 for (const span of informationSpans) {
-                    if (span.dataset['errSpan'] === entrie[0] && entrie[1].length < 1) span.innerHTML = 'Polje ne može biti prazno'; // validator is false
+                    if (span.dataset['errSpan'] === entrie[0] && entrie[1].length < 1) span.innerHTML = 'Polje ne može biti prazno';
                     if (span.dataset['errSpan'] === entrie[0] && entrie[1].length > 1) span.innerHTML = '';
                 };
-                // if !validator return
             };
             if (!handler) return;
             handler(userData);
@@ -107,7 +129,6 @@ class LoginView extends View {
                 if (span.dataset['errSpan'] === formInput.name && formInput.value.length >= 1) span.innerHTML = '';
             };
         });
-
     };
 
     _populateUserPanelForm() {
@@ -117,9 +138,9 @@ class LoginView extends View {
 
         for (const entrie of Object.entries(this._data.user)) {
             for (const panelInput of userPanelInputs) {
-                if (entrie[0] === panelInput.name) panelInput.placeholder = entrie[1];
-
-                if (entrie[0] === 'name') {
+                if (entrie[0] === panelInput.name && entrie[1]) panelInput.value = entrie[1];
+                if (panelInput.placeholder === 'undefined' || panelInput.placeholder === '') panelInput.placeholder = panelInput.dataset['placeholder'];
+                if (entrie[0] === 'name' && entrie[1]) {
                     avatarName.innerHTML = entrie[1];
                     avatarInitials.innerHTML = entrie[1][0];
                 };
@@ -142,10 +163,10 @@ class LoginView extends View {
 
 
             <label class="login-form__label login-form__element">Lozinka:
-                <input class="login-form__input" type="password" name="password"
+                <input class="login-form__input login-form__input--password" type="password" name="password"
                     placeholder="Unesi svoju lozinku" />
                 <span class="login-form__password__eye">
-                    <img src="./images/eye-on.svg" />
+                    <img class="login-form__password__eye-icon" src="./images/eye-on.svg" />
                 </span>
             </label>
 
@@ -171,7 +192,7 @@ class LoginView extends View {
                 <p class="login-container__close-btn">&#10006;</p>
                     <h4 class="uppercase headings-font login-form__element">registruj se</h4>
                     <label class="login-form__label login-form__element">Napisi nam svoje ime:
-                        <input class="login-form__input" type="text" name="name" placeholder="npr. Jana Jovanovic" />
+                        <input class="login-form__input" type="text" name="name" placeholder="npr. Jana Jovanovic"/>
                     </label>
 
                     <span class="login-form__label__span" data-err-span="name"></span>
@@ -187,7 +208,7 @@ class LoginView extends View {
                         <input class="login-form__input" type="password" name="password"
                             placeholder="Unesi svoju lozinku" />
                         <span class="login-form__password__eye">
-                            <img src="./images/eye-on.svg" />
+                            <img class="login-form__password__eye-icon" src="./images/eye-on.svg" />
                         </span>
                     </label>
 
@@ -197,7 +218,7 @@ class LoginView extends View {
                         <input class="login-form__input" type="password" name="confirmPassword"
                             placeholder="Unesi svoju lozinku" />
                         <span class="login-form__password__eye">
-                            <img src="./images/eye-on.svg" />
+                            <img class="login-form__password__eye-icon" src="./images/eye-on.svg" />
                         </span>
                     </label>
 
@@ -223,24 +244,24 @@ class LoginView extends View {
                     <div class="user-panel__user-info">
                         <p class="login-container__close-btn">&#10006;</p>
 
-                        <form class="login-form user-panel__form">
+                        <form class="login-form user-panel__form" data-action="update">
                             <label class="login-form__label login-form__element">Ime:
-                                <input class="user-panel-form__input" type="text" name="name" placeholder="" />
+                                <input class="user-panel-form__input" type="text" name="name" placeholder="" data-placeholder="npr. Jana Jovanovic"/>
                             </label>
                             <label class="login-form__label login-form__element">Email:
-                                <input class="user-panel-form__input" type="email" name="email" placeholder="" />
+                                <input class="user-panel-form__input" type="email" name="email" placeholder="" data-placeholder="npr: mojmejl@gmail.com"/>
                             </label>
                             <label class="login-form__label login-form__element">Poštanski kod:
-                                <input class="user-panel-form__input" type="text" name="postal" placeholder="" />
+                                <input class="user-panel-form__input" type="text" name="postal" placeholder="" data-placeholder="npr: 21000"/>
                             </label>
                             <label class="login-form__label login-form__element">Mesto:
-                                <input class="user-panel-form__input" type="text" name="city" placeholder="" />
+                                <input class="user-panel-form__input" type="text" name="city" placeholder="" data-placeholder="npr: Novi Sad"/>
                             </label>
                             <label class="login-form__label login-form__element">Adresa:
-                                <input class="user-panel-form__input" type="text" name="address" placeholder="" />
+                                <input class="user-panel-form__input" type="text" name="address" placeholder="" data-placeholder="npr: Bulevar Evrope 11/9"/>
                             </label>
                             <label class="login-form__label login-form__element">Telefon:
-                                <input class="user-panel-form__input" type="text" name="telephone" placeholder="" />
+                                <input class="user-panel-form__input" type="text" name="telephone" placeholder="" data-placeholder="npr: 060 123 4 567"/>
                             </label>
                             <p class="login-form__element login-form__links login-form__links--highlighted">Želiš da
                                 promeniš lozinku?</p>

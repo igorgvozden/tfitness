@@ -34,6 +34,10 @@ const getData = async function () {
         loginView.addHandlerrender(handleLoginView);
         loginView.addLogoutHandler(logout);
 
+        // 6) renderuj dugme za admina ako je ulogovan
+        console.log(navbarView, data);
+        navbarView.renderAdminIcon(data.user.admin, data.user.adminPanelUrl);
+
     } catch (error) {
         console.log('ooopssss', error);
         throw error;
@@ -120,7 +124,7 @@ const loginFromData = async function (dataOfForm) {
         if (data.status === 'success') {
             model.createUserStateObj(data);
             // reload stranicu ako je korisnik ulogovan
-            reloadPage(1000);
+            reloadPage(700);
         };
 
     } catch (error) {
@@ -179,11 +183,45 @@ const logout = async function () {
 
         console.log(data, 'logout');
         if (data.status === 'success') {
-            reloadPage(1000);
-            loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Ulogovani ste!'}`);
+            reloadPage(100);
+            loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Izlogovani ste!'}`);
+            navbarView.renderUserIcon('out');
         };
     } catch (error) {
         console.log(error);
+    };
+};
+
+const updateUser = async function (dataOfForm) {
+    try {
+        const formSubmitBtn = document.querySelector('.login-form__submit-button');
+        loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
+
+        const response = await fetch(`${API_URL}/users/updateme`, {
+            method: 'PATCH',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Origin': `${API_URL}/users/updateme`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(dataOfForm)
+        });
+        let data = await response.json();
+
+        model.createUserStateObj(data);
+
+        if (data.status === 'success') {
+            loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'Promene su sacuvane!'}`);
+        };
+
+        console.log('korisnik je updejtovan', data, model.userState);
+    } catch (error) {
+        console.log(error)
     };
 };
 
@@ -201,12 +239,15 @@ const loggerHandler = async (data) => {
         if (data.action === 'register') registerFromData(data);
 
         // 4) ako je prosledjen UPDATE, a) prosledi na patch rutu, b) upisi korisnika u user state, c) update user panel
+        if (data.action === 'update') {
+            updateUser(data);
+            reloadPage(1000)
+        }
 
     } catch (error) {
         console.log(error)
     };
 };
-
 
 const handleNavbarView = async function () {
     try {
@@ -215,6 +256,9 @@ const handleNavbarView = async function () {
 
         // 2) pozovi render funkciju da renderuje markup podacima koje sada subnav view ima 
         navbarView.initialize(model.leggingsState);
+
+        // 3) proveri da li je korisnik ulogovan i da li je Admin
+
     } catch (error) {
         console.log(error);
     };
@@ -230,12 +274,18 @@ const handleLoginView = async function () {
             // 2) ako postoji, initcijalizuj loginView podacima iz model.userState
             loginView.initialize(model.userState);
             console.log(loginView);
+
+            // 3) ako je korisnik ulogovan promeni ikonicu za korisnika loggedin
+            navbarView.renderUserIcon('in');
             return true;
         };
 
-        // 3) ako korisnik ne postoji/nije ulogovan
+        // 4) ako korisnik ne postoji/nije ulogovan
         if (!model.userState.user) {
             console.log('korisnik nije ulogovan');
+
+            // 5} promeni ikonicu korisnika u loggedout
+            navbarView.renderUserIcon('out');
             return false;
         }
     } catch (error) {
@@ -265,7 +315,7 @@ const init = function () {
     // prikaz login/register forme na click
     loginView.addHandlerrender(handleLoginView);
     loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
-    // login/register
+    // login/register/update user
     loginView.addLoginHandler(loggerHandler);
 };
 init();

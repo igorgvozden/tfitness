@@ -9,11 +9,11 @@ const AppError = require('../utilities/appError');
 // };
 
 // filter req.body tako da se posalju samo dozvoljena polja za update > updateMe ruta
-const filterObj = function (obj, ...allowedFields) {
+const filterObj = function (obj, allowedFields) {
     const newObj = {};
 
-    Object.keys(obj).forEach(el => {
-        if (allowedFields.includes(el)) newObj[el] = obj[el];
+    Object.entries(obj).forEach(el => {
+        if (allowedFields.includes(el[0]) && el[1].length > 0) newObj[el[0]] = obj[el[0]];
     });
     return newObj;
 };
@@ -73,7 +73,8 @@ exports.updateMe = async (req, res, next) => {
             }
         });
     } catch (err) {
-        next(new AppError('Promena nije sacuvana, doslo je do greske!', 500))
+        console.log(err)
+        next(new AppError('Promena nije sacuvana, doslo je do greske!', 500));
     };
 };
 
@@ -87,5 +88,5 @@ exports.deleteMe = async (req, res, next) => {
         });
     } catch (err) {
         next(new AppError('Brisanje nije uspelo, doslo je do greske!', 500))
-    }
+    };
 };

@@ -16,11 +16,26 @@ class NavbarView extends View {
 
     // NAV ICONS 
 
+    // ako je korisnik ulogovan menja se korisnik ikonica
+    renderUserIcon(param) {
+        const userBtn = document.querySelector('.nav__icon--profile');
+        if (param === 'in') userBtn.src = `${API_URL}/person.svg`;
+        if (param === 'out') userBtn.src = `${API_URL}/person-outline.svg`;
+    };
+
     // 1) proveri da li postoji model.stateUser i da li je admin
+    renderAdminIcon(param, address) {
+        const adminBtn = document.querySelector('.nav__btn--admin');
+        console.log(adminBtn, address);
+        if (param === true) {
+            adminBtn.classList.remove('hidden');
 
-    // 2) ako postoji, renderuj ikonicu za admin panel
+        }
+        if (param === false) {
+            adminBtn.classList.add('hidden');
 
-    // 3) proveri da li je i dalje ulogovan
+        }
+    };
 
 
     // handler za login ikonicu koji ce controller da poveze sa loginView
@@ -89,11 +104,11 @@ class NavbarView extends View {
     };
 
     _subnavShow() {
-        this._subnavView.style.transform = 'translateY(0vh)'; //////////////////
+        this._subnavView.style.transform = 'translateY(0vh)';
     };
 
     _subnavHide() {
-        this._subnavView.style.transform = 'translateY(-100vh)'; ////////////////
+        this._subnavView.style.transform = 'translateY(-100vh)';
         this._subnavRemoveImage();
     };
 
