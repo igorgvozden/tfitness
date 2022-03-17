@@ -2,6 +2,10 @@
 @import './fonts';
 @import './header';
 @import './login';
+@import './hero';
+@import './collection';
+@import './modal';
+@import './cart';
 
 * {
     margin: 0;
@@ -13,6 +17,7 @@
 
 body {
     background-color: $backgroundColor;
+    position: relative;
 }
 
 .container {
@@ -32,10 +37,124 @@ body {
 }
 
 .blured {
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
+    filter: blur(11px);
+    -webkit-filter: blur(11px);
 }
 
 .hidden {
     display: none;
+}
+
+// SCROLLBAR
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 15px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  // CLOSE BUTTON
+  .close-btn {
+    font-size: 1.3rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: ease-in-out 0.2s;
+    
+    &:hover {
+        background-color: $close-button-color;
+        cursor: pointer;
+        box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+
+        animation-name: rotate-close-btn;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    }
+}
+
+@keyframes rotate-close-btn {
+    from {
+        transform: rotate(90deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+// FORM ELEMENTS
+.form-label {
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    position: relative;
+}
+
+.form-label-span {
+    color: red;
+    font-size: 0.8rem;
+    transform: translateY(-50%);
+}
+
+.form-input {
+    padding: 0.5rem;
+    border-radius: 25px;
+    outline: none;
+    background-color: $backgroundColor;
+    box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+    border: none;
+    transition: ease-in-out 0.2s;
+
+    &:hover {
+        box-shadow: 1px 1px 3px $color-shadow-dark, -3px -3px 5px white;
+    }
+    &:focus {
+        box-shadow: 1px 1px 3px $color-shadow-dark, -3px -3px 5px white;
+    }
+}
+
+.form-links {
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.form-links--highlighted {
+    font-weight: 600;
+    transition: 0.2s ease;
+
+    &:hover {
+        cursor: pointer;
+        color: $font-colored-higlight;
+    }
+}
+
+// SUBMIT BUTTON
+.submit-button {
+    padding: 0.9rem;
+    border: none;
+    border-radius: 25px;
+    background-color: $fontColor;
+    color: white;
+    transition: 0.3s;
+    box-shadow: 3px 3px 5px $color-shadow-dark, -3px -3px 5px white;
+
+    &:hover {
+        cursor: pointer;
+        background-color: lighten($color: $fontColor, $amount: 10%);
+    }
 }

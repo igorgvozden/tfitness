@@ -6,7 +6,7 @@ class LoginView extends View {
     _parentElement = document.querySelector('.login-container');
 
     // handler funkcija koja ce biti pozvana iz controller/navbarView kako bi se prikazao login/register
-    async addHandlerrender(handler) {
+    async addHandlerRender(handler) {
         // 1) handler ce proveriti da li u modelu postoji ulogovan korisnik
         const userLogged = await handler();
 
@@ -26,7 +26,9 @@ class LoginView extends View {
     addHandlerLoginFormCloseBtn(handler) {
         this._parentElement.addEventListener('click', (e) => {
             const closeBtn = e.target.closest('.login-container__close-btn');
-            if (!closeBtn) return;
+            const form = e.target.closest('.login-form');
+            if (form && !closeBtn) return;
+
             this.showLoginView();
             handler();
         });

@@ -1,5 +1,6 @@
 import View from './view.mjs';
 import { API_URL } from '../frontConfig.js';
+import cart from './cart.mjs';
 
 class NavbarView extends View {
     _data;
@@ -15,6 +16,14 @@ class NavbarView extends View {
     };
 
     // NAV ICONS 
+
+    addCartIconHandler(handler) {
+        this._parentElement.addEventListener('click', (e) => {
+            const cartIcon = e.target.closest('.nav__btn--cart');
+            if (!cartIcon) return;
+            handler();
+        });
+    };
 
     // ako je korisnik ulogovan menja se korisnik ikonica
     renderUserIcon(param) {
@@ -34,9 +43,8 @@ class NavbarView extends View {
         if (param === false) {
             adminBtn.classList.add('hidden');
 
-        }
+        };
     };
-
 
     // handler za login ikonicu koji ce controller da poveze sa loginView
     addHandlerloginIconClick(handler) {

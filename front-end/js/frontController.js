@@ -2,6 +2,8 @@ import { API_URL } from '../frontConfig.js';
 import * as model from './frontModel.mjs';
 import navbarView from './../views/navbarView.mjs';
 import loginView from '../views/loginView.mjs';
+import heroView from '../views/heroView.mjs';
+import cart from '../views/cart.mjs';
 
 console.log('we are live 1', API_URL);
 
@@ -20,21 +22,28 @@ const getData = async function () {
         let data = await response.json();
         console.log(data, 'podaci su fetchovani');
 
+
+        console.log(JSON.parse(localStorage.getItem('cart'))); ////////////////
+
         // 2) proveri da li su artikli dostupni sa servera
         if (!data || data.results === 0) throw new Error;
 
         // 3) update leggingsState podacima koje si fetchovao sa DB
         model.createLeggingsStateObj(data);
 
-        // 4) proveri da li postoji ulogovan korisnik, response.locals prosledjuje: data.user
+        // 4) renderuj hero view
+        heroView.addHandlerRender(model.leggingsState.leggings);
+        console.log(heroView, 'ovo je heroView');
+
+        // 5) proveri da li postoji ulogovan korisnik, response.locals prosledjuje: data.user
         if (!data.user) return;
         model.createUserStateObj(data.user);
 
-        // 5) renderuj user panel za ulogovanog korisnika
-        loginView.addHandlerrender(handleLoginView);
+        // 6) renderuj user panel za ulogovanog korisnika
+        loginView.addHandlerRender(handleLoginView);
         loginView.addLogoutHandler(logout);
 
-        // 6) renderuj dugme za admina ako je ulogovan
+        // 7) renderuj dugme za admina ako je ulogovan
         console.log(navbarView, data);
         navbarView.renderAdminIcon(data.user.admin, data.user.adminPanelUrl);
 
@@ -228,7 +237,7 @@ const updateUser = async function (dataOfForm) {
 ///////// HANDLER FUNKCIJE
 const loggerHandler = async (data) => {
     try {
-        // 1) proveri da su prosledjeni podaci
+        // 1) proveri da li su prosledjeni podaci
         if (!data) return;
         console.log('logger handler', data);
 
@@ -241,8 +250,8 @@ const loggerHandler = async (data) => {
         // 4) ako je prosledjen UPDATE, a) prosledi na patch rutu, b) upisi korisnika u user state, c) update user panel
         if (data.action === 'update') {
             updateUser(data);
-            reloadPage(1000)
-        }
+            reloadPage(1000);
+        };
 
     } catch (error) {
         console.log(error)
@@ -264,10 +273,23 @@ const handleNavbarView = async function () {
     };
 };
 
+// const handleHeroView = async function () {
+//     try {
+//         // 1) proveri da li model ima podatke
+//         if (model.leggingsState.results === null) await getData();
+
+//         // 2) inicijalizuj heroView podacima
+//         heroView.initialize(model.leggingsState.leggings);
+//         console.log(heroView, 'ovo je heroView');
+
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+
 const handleLoginView = async function () {
     try {
         // 1) proveri da li postoji ulogovan korisnik
-        // await login(); // privremeno je ovde da lazira korisnika
         if (model.userState.user) {
             console.log('korisnik je ulogovan', model.userState.user.name);
 
@@ -295,10 +317,16 @@ const handleLoginView = async function () {
 
 const handleProfileIconClick = function () {
     loginView.showLoginView();
+    heroView.blurParentElement();
 };
 
 const handleFormCloseButtonClick = function () {
     navbarView.removeNavFixedPosition();
+    heroView.blurParentElement();
+};
+
+const handleCartIconClick = function () {
+    cart.toggleShowCart();
 };
 
 const reloadPage = function (miliseconds = 1000) {
@@ -312,8 +340,9 @@ const init = function () {
     // inicijalizacija navbara
     navbarView.addHandlerInitialize(handleNavbarView);
     navbarView.addHandlerloginIconClick(handleProfileIconClick);
+    navbarView.addCartIconHandler(handleCartIconClick);
     // prikaz login/register forme na click
-    loginView.addHandlerrender(handleLoginView);
+    loginView.addHandlerRender(handleLoginView);
     loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
     // login/register/update user
     loginView.addLoginHandler(loggerHandler);

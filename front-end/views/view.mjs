@@ -1,5 +1,3 @@
-// import icons from '../../images/icons.svg';
-
 export default class View {
     _data;
     // trebace mi parent element za svaki view
@@ -14,8 +12,8 @@ export default class View {
 
     renderSpinner(element, template) {
         const markup =
-            `<div class="spinner">
-                spiner
+            `<div class="spinner uppercase ">
+                ...spin
             </div>`;
 
         element.innerHTML = '';

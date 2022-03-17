@@ -18,8 +18,11 @@
     padding: 1rem 2rem;
     box-sizing: border-box;
     min-width: 65%;
-    // position: fixed;
-    z-index: 5;
+    // position: fixed; // dodeljena mu je fixed klasa na html-u
+    z-index: 7;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .header-container_nav_navigation {
@@ -77,16 +80,25 @@
 //SUBNAV
 
 .header-container_sub-nav {
+    margin: 0 auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    width: 65%;
     display: flex;
     min-height: 25rem;
     background-color: rgba(255, 255, 255, 0.8);
     transition: 0.3s;
     transform: translateY(-100vh);
     z-index: 6;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 3px 3px 10px $color-shadow-dark, -5px -5px 5px white;
 }
 
 .sub-nav__products-list {
-    padding: 5rem 2rem 2rem 2rem;
+    padding: 6rem 2rem 2rem 2rem;
     flex-basis: 65%;
 }
 

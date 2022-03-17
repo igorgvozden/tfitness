@@ -42,7 +42,7 @@
                             </button>
 
                             <button class="nav__btn nav__btn--cart" type="button">
-                                <img class="nav__icon nav__icon--cart" src="./images/icon-bag.svg" alt="Korpa" />
+                                <img class="nav__icon nav__icon--cart" src="./images/bag-handle.svg" alt="Korpa" />
                             </button>
 
                             <a href="#" class="nav__btn--admin hidden">
@@ -70,6 +70,69 @@
             </div>
 
         </header>
+
+        <main class="hero">
+            <!-- ovde ce sve da bude renderovano shop i artikli-->
+
+            <!-- <div class="collection">
+                <div class="collection__carousel">
+                    <div class="collection__carousel__photo collection__carousel__window">
+                        <p>naziv kolekcije</p>
+                        <p>kratak opis kolekcije</p><span class="shop-text--discount">popust</span>
+                    </div>
+
+                    <div class="collection__carousel__switch">
+                        <img src="./images/chevron-forward-outline.svg" />
+                    </div>
+
+                    <div class="collection__carousel__shop collection__carousel__window">
+
+                        <div class="shop__description shop-window">
+                            <p class="shop-text">naziv kolekcije</p>
+                            <p class="shop-text">slogan kolekcije</p>
+                            <p class="shop-text">00.00 rsd</p><span class="shop-text--discount">popust</span>
+                        </div>
+
+                        <div class="shop__container shop-window">
+                            <div class="shop__carousel">
+                                <div class="shop__carousel-container">
+                                    <img class="shop__carousel-container__image" src="" />
+                                    <img class="shop__carousel-container__image" src="" />
+                                    <img class="shop__carousel-container__image" src="" />
+                                    <img class="shop__carousel-container__image" src="" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="shop__selection shop-window">
+                            <div class="shop__selection__sizes">
+                                <p class="shop-text">boje u ponudi</p>
+                                <div class="shop__selection__colors">
+
+                                    <div class="shop__selection__colors-color"></div>
+                                    <div class="shop__selection__colors-color"></div>
+                                    <div class="shop__selection__colors-color"></div>
+
+                                </div>
+                                <div class="shop__selection__sizes-container">
+                                    <p class="shop-text shop-text--inline">Izaberi velićinu</p>
+                                    <p class="shop-text shop-text--inline ">Vodič za veličine</p>
+
+                                    <div class="shop__selection__sizes-buttons">
+                                        <div class="shop__selection__sizes-size">S</div>
+                                        <div class="shop__selection__sizes-size">M</div>
+                                        <div class="shop__selection__sizes-size">L</div>
+                                    </div>
+
+                                    <p class="shop-text shop-text--button uppercase headings-font">Ubaci u korpu</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div> -->
+        </main>
 
         <div class="login-container hidden">
 
@@ -176,6 +239,92 @@
             </div> -->
         </div>
 
+    </div>
+
+    <div class="modal hidden">
+        <!-- ovde se renderuje cart i admin panel-->
+        <div class="cart">
+            <p class="cart__close-btn close-btn">&#10006;</p>
+            <p class="cart__title headings-font">Tvoja Shopping Torba</p>
+
+            <!-- <div class="cart-container cart-container--empty">
+                <img class="cart-container__bag-image--empty" src="./images/bag-handle.svg" />
+
+                <p>tvoja torba je prazna ...</p>
+                <p class="cart-container__button--empty submit-button">Nastavi sa shoppingom!</p>
+            </div> -->
+
+            <div class="cart-container">
+
+                <div class="cart-container__info">
+                    <div class="cart-container__info__items">
+
+                        <div class="cart__item">
+                            <div class="cart__item__desc">
+                                <div class="cart__item__text">
+                                    <p
+                                        class="cart__item__text-line cart__item__text-line--name uppercase headings-font">
+                                        ime kolekcije
+                                    </p>
+                                    <p class="cart__item__text-line cart__item__text-line--color">boja</p>
+                                    <p class="cart__item__text-line cart__item__text-line--size uppercase">m</p>
+                                    <p class="cart__item__text-line cart__item__text-line--amount headings-font">0.00
+                                        rsd</p>
+                                </div>
+                                <div class="cart__item__photo">
+
+                                </div>
+                            </div>
+
+                            <div class="cart__item__bar">
+                                <p class="cart__item__bar-text cart__item__bar-text--btn">
+                                    <img src="./images/trash.svg" alt="kanta" />
+                                </p>
+                                <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--minus">-</p>
+                                <p class="cart__item__bar-text cart__item__bar-text--quantity">1</p>
+                                <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--plus">+</p>
+                                <p class="cart__item__bar-text cart__item__bar-text--amount">0.00 rsd</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="cart-container__info__buyer">
+                        <form class="cart-form">
+                            <p class="cart-form__title headings-font">Tvoji podaci</p>
+                            <label class="cart-form__label form-label">Ime:
+                                <input class="cart-form__input form-input" type="text" name="name" placeholder=""
+                                    data-placeholder="npr. Jana Jovanovic" />
+                            </label>
+                            <label class="cart-form__label form-label">Mesto:
+                                <input class="cart-form__input form-input" type="text" name="city" placeholder=""
+                                    data-placeholder="npr. 21000 Novi Sad" />
+                            </label>
+                            <label class="cart-form__label form-label">Adresa:
+                                <input class="cart-form__input form-input" type="text" name="address" placeholder=""
+                                    data-placeholder="npr. Bulevar Oslobođenja 21/3" />
+                            </label>
+                            <label class="cart-form__label form-label">Telefon:
+                                <input class="cart-form__input form-input" type="text" name="telephone" placeholder=""
+                                    data-placeholder="npr. 060 123 4 567" />
+                            </label>
+                            <p class="cart-form__link form-links">imaš nalog?
+                                <span class="form-links--highlighted cart-form__switch-btn">Uloguj se!</span>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="cart-container__sumary">
+                    <div class="cart-container__summary__checkout">
+                        <p class="checkout__total-price">Ukupan iznos:</p>
+                        <p class="checkout__total-price">0.00 rsd</p>
+                    </div>
+                    <button class="cart-form__submit-button uppercase headings-font submit-button"
+                        type="button">poruči</button>
+                </div>
+
+            </div>
+        </div>
     </div>
 </body>
 
