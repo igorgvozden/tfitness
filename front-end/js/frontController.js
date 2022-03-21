@@ -331,9 +331,30 @@ const reloadPage = function (miliseconds = 1000) {
     window.setTimeout(() => location.reload(), miliseconds);
 };
 
+// CART HANDLERS
+
 const addToCart = function (item) {
     model.addToCart(item);
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
+    cartView.updateCart();
+};
+
+const removeCartItem = function (item) {
+    model.removeCartItem(item);
+    cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
+    cartView.updateCart();
+};
+
+const increaseItemQuantity = function (item) {
+    model.increaseItemQuantity(item);
+    cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
+    cartView.updateCart();
+};
+
+const decreaseItemQuantity = function (item, itemQuantity) {
+    itemQuantity > 1 ? model.decreaseItemQuantity(item) : model.removeCartItem(item);
+    cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
+    cartView.updateCart();
 };
 /////////
 
@@ -351,7 +372,10 @@ const init = function () {
     // cart
     model.loadCart();
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
-    heroView.addAddToCartHandler(addToCart)
+    heroView.addAddToCartHandler(addToCart);
+    cartView.addRemoveCartItemHandler(removeCartItem);
+    cartView.addIncreaseQuantityHandler(increaseItemQuantity);
+    cartView.addDecreaseQuantityHandler(decreaseItemQuantity);
 
 };
 init();

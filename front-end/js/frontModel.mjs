@@ -109,8 +109,13 @@ export const clearAllBookmarks = function () {
 ///////////////////////////////
 // CART
 
-export const persistCart = function () {
+export const persistCart = function (cart) {
+    // sacuvaj cart u localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
 
+    // postavi cart u leggingsState.cart
+    leggingsState.cart = JSON.parse(localStorage.getItem('cart'));
+    console.log(leggingsState.cart, 'state cart');
 };
 
 export const addToCart = function (item) {
@@ -118,11 +123,7 @@ export const addToCart = function (item) {
 
     // 1) ako je LC prazan, dodaj item
     if (storage === null) {
-        localStorage.setItem('cart', JSON.stringify([item]));
-
-        // postavi cart u leggingsState
-        leggingsState.cart = JSON.parse(localStorage.getItem('cart'));
-        console.log(leggingsState.cart, 'state cart')
+        persistCart([item]);
     };
 
     // 2) ako LC nije prazan, pushuj item uz postojece artikle
@@ -152,7 +153,7 @@ export const addToCart = function (item) {
                 const sample = el.name + el.color + el.size;
                 const compareTo = el2.name + el2.color + el2.size;
 
-                return (JSON.stringify(sample) === JSON.stringify(compareTo));
+                return (sample === compareTo);
             }) === i;
         });
 
@@ -161,11 +162,7 @@ export const addToCart = function (item) {
         console.log(duplicate, 'duplicate');
 
         // sacuvaj cart u localStorage
-        localStorage.setItem('cart', JSON.stringify(filtered));
-
-        // postavi cart u leggingsState.cart
-        leggingsState.cart = JSON.parse(localStorage.getItem('cart'));
-        console.log(leggingsState.cart, 'state cart')
+        persistCart(filtered);
     };
 
 };
@@ -185,3 +182,51 @@ export const loadCart = function () {
     return parsedStorage;
 };
 
+export const removeCartItem = function (item = undefined) {
+    const storage = localStorage.getItem('cart');
+    const parsedStorage = JSON.parse(storage);
+
+    if (!item) return;
+
+    // ako item postoji u localStorage, obrisi ga
+    const reduced = parsedStorage.filter(el => {
+        const sample = el.name + el.color + el.size;
+
+        if (sample !== item) return el;
+    });
+
+    // sacuvaj novi cart u localStorage
+    persistCart(reduced);
+};
+
+export const increaseItemQuantity = function (item) {
+    const storage = localStorage.getItem('cart');
+    const parsedStorage = JSON.parse(storage);
+
+    parsedStorage.find(el => {
+        const sample = el.name + el.color + el.size;
+
+        if (sample === item) {
+            el.quantity += 1;
+        };
+    });
+
+    const filtered = parsedStorage.filter((el, i, array) => array.findIndex(el2 => (JSON.stringify(el2) === JSON.stringify(el))) === i);
+    persistCart(filtered);
+}
+
+export const decreaseItemQuantity = function (item) {
+    const storage = localStorage.getItem('cart');
+    const parsedStorage = JSON.parse(storage);
+
+    parsedStorage.find(el => {
+        const sample = el.name + el.color + el.size;
+
+        if (sample === item) {
+            el.quantity -= 1;
+        };
+    });
+
+    const filtered = parsedStorage.filter((el, i, array) => array.findIndex(el2 => (JSON.stringify(el2) === JSON.stringify(el))) === i);
+    persistCart(filtered);
+}

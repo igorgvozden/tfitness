@@ -6,49 +6,69 @@ class CartView extends View {
     _cartContainer = document.querySelector('.cart-container');
 
     toggleShowCart() {
-        this._parentElement.classList.toggle('hidden');
+        this._parentElement.classList.remove('hidden');
 
-        this._hideCart();
+        const documentContainer = document.querySelector('.container');
+        documentContainer.classList.add('blured');
 
-        // 1) proveri postoji li cart u localStorage/model - ako nema renderuj empty cart
-        if (this._data.cart.length < 1) this._generateEmptyCart();
+        this._parentElement.addEventListener('click', (e) => {
+            const closeBtn = e.target.closest('.cart__close-btn');
+            const backToShoppingBtn = e.target.closest('.cart-container__button--empty');
+            const cart = e.target.closest('.cart');
+            if (!closeBtn && !backToShoppingBtn) return;
 
-        // 2) ako postoji localStorage/model za cart - renderuj cart
-        if (this._data.cart.length >= 1) this._generateFullCart()
+            this._parentElement.classList.add('hidden');
+            documentContainer.classList.remove('blured');
+        });
 
-        // 3) dodaj buttone
-        this._removeCartItem();
-        // console.log(this)
+        this.updateCart();
     };
 
-    _removeCartItem() {
+    addRemoveCartItemHandler(handler) {
         this._cartContainer.addEventListener('click', (e) => {
             const removeBtn = e.target.closest('.cart-btn--remove');
             if (!removeBtn) return;
 
             const cartItem = e.target.closest('.cart__item');
             cartItem.style.display = 'none';
+            console.log(this._data.cart);
 
-            console.log('delete');
+            const itemData = cartItem.dataset['item'];
+            const itemToRemove = itemData.replace(/,/g, '');
 
+            handler(itemToRemove);
         });
     };
 
-    _hideCart() {
-        const documentContainer = document.querySelector('.container');
-        documentContainer.classList.toggle('blured');
+    addIncreaseQuantityHandler(handler) {
+        this._cartContainer.addEventListener('click', (e) => {
+            const plusBtn = e.target.closest('.cart-btn--plus');
+            const cartItem = e.target.closest('.cart__item');
+            if (!plusBtn) return;
 
-        this._parentElement.addEventListener('click', (e) => {
-            const closeBtn = e.target.closest('.cart__close-btn');
-            const backToShoppingBtn = e.target.closest('.cart-container__button--empty');
-            const cart = e.target.closest('.cart');
-            if (cart && !closeBtn && !backToShoppingBtn) return;
-            this.toggleShowCart();
+            const cartItemData = cartItem.dataset['item'];
+            const itemToAdd = cartItemData.replace(/,/g, '');
+
+            handler(itemToAdd);
         });
     };
 
-    _updateCart() {
-        this._cartContainer.innerHTML = 'update';
+    addDecreaseQuantityHandler(handler) {
+        this._cartContainer.addEventListener('click', (e) => {
+            const minusBtn = e.target.closest('.cart-btn--minus');
+            const cartItem = e.target.closest('.cart__item');
+            if (!minusBtn) return;
+
+            const itemQuantity = cartItem.dataset['quantity'];
+            const cartItemData = cartItem.dataset['item'];
+            const itemToDecrease = cartItemData.replace(/,/g, '');
+
+            handler(itemToDecrease, itemQuantity);
+        });
+    };
+
+    updateCart() {
+        (this._data.cart.length < 1) ? this._generateEmptyCart() : this._generateFullCart()
     };
 
     _generateFullCart() {
@@ -109,7 +129,7 @@ class CartView extends View {
 
     _generateCartItemsMarkup(name, color, size, price, discount, quantity) {
         return `
-            <div class="cart__item" data-item="${[name, color, size]}">
+            <div class="cart__item" data-item="${[name, color, size]}" data-quantity="${quantity}">
                 <div class="cart__item__desc">
                     <div class="cart__item__text">
                         <p
@@ -119,7 +139,7 @@ class CartView extends View {
                         <p class="cart__item__text-line cart__item__text-line--color">${color}</p>
                         <p class="cart__item__text-line cart__item__text-line--size uppercase">${size}</p>
                         <p class="cart__item__text-line cart__item__text-line--amount headings-font">
-                            ${price}.00 rsd
+                            ${price},00 rsd
                         </p>
                     </div>
                     <div class="cart__item__photo"
@@ -135,7 +155,7 @@ class CartView extends View {
                     <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--minus">-</p>
                     <p class="cart__item__bar-text cart__item__bar-text--quantity">${quantity}</p>
                     <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--plus">+</p>
-                    <p class="cart__item__bar-text cart__item__bar-text--amount">${price * quantity} rsd</p>
+                    <p class="cart__item__bar-text cart__item__bar-text--amount">${price * quantity},00 rsd</p>
                 </div>
             </div>
         `;
