@@ -6,19 +6,28 @@ class HeroView extends View {
     _parentElement = document.querySelector('.hero');
     _carouselContainer = document.querySelector('.collection__carousel');
 
+    _collections = []; // ovde ce biti objekat za svaki artikal koji ce se proslediti local storage-u za shopping cart
+
     //  ADD HANDLER FUNKCIJE
     addHandlerRender(data) {
         this.initialize(data);
+        this.initCollections();
         // renderuj hero markup
         this.renderHero();
         // aktiviraj buttone
         this._switchWindows();
-        this._addToCart();
         this._changeShopPhotos();
     };
 
     blurParentElement() {
         this._parentElement.classList.toggle('blured');
+    };
+
+    // INIT COLLECTION SELECTION
+    initCollections() {
+        this._data.forEach(el => {
+            this._collections.push({ name: el.name, color: '', size: '', price: '', discount: '', quantity: 1 });
+        });
     };
 
     // HERO CAROUSEL
@@ -62,36 +71,7 @@ class HeroView extends View {
         });
     };
 
-    // ovo je objekat koji ce se proslediti local storage-u za shopping cart
-    _cartItem = {
-        name: '',
-        size: 'm',
-        color: '',
-        price: '',
-        discount: ''
-    };
-
-    _createLocalStorageCart(item) {
-        const newLocalStorage = [];
-
-        // 1) proveri da li postoji local storage cart
-        const currentLocalStorage = localStorage.getItem('cart');
-
-        // 2) ako postoji, parsuj ga i pushuj u newLocalStorage
-        if (currentLocalStorage) {
-            const parsedLocalStorage = JSON.parse(currentLocalStorage);
-            newLocalStorage.push(...parsedLocalStorage);
-        } else console.log('nema nicega u localStorage');
-
-        // 3) pushuj item koji korisnik zeli da doda u cart
-        newLocalStorage.push(item);
-
-        // 4) sacuvaj newLocalStorage u localStorage
-        localStorage.setItem('cart', JSON.stringify(newLocalStorage));
-        console.log(JSON.parse(localStorage.getItem('cart')), 'ovo je parsovan lc');
-    };
-
-    _addToCart() {
+    addAddToCartHandler(handler) {
         // ovde cu skupiti podatke o artiklu koji korisnik hoce da doda u cart
         // svi podaci su u data-setu html elemenata u shopu (pogledaj this._generateMarkup)
 
@@ -99,22 +79,39 @@ class HeroView extends View {
             const addToCartBtn = e.target.closest('.shop-text--button');
             if (!addToCartBtn) return;
 
-            const item = addToCartBtn.dataset['addToCart'].split(',');
+            // 1) za svaki 'dodaj u korpu btn' dodaj objekat iz this._collections // to ce biti cart item koji cu proslediti leggingsState.cart/local storage
+            const collectionName = addToCartBtn.dataset['name'];
+            const collectionSize = addToCartBtn.dataset['size'];
+            const collectionColor = addToCartBtn.dataset['color'];
+            const collectionPrice = addToCartBtn.dataset['price'];
+            const collectionDiscount = addToCartBtn.dataset['discount'];
 
-            this._cartItem.name = item[0];
-            this._cartItem.price = item[1];
-            this._cartItem.discount = item[2];
-            this._cartItem.color = item[3];
+            let item = this._collections.filter(el => el.name === collectionName); // referenca na objekat u this._collections sa imenom koje mi treba
 
-            this._createLocalStorageCart(this._cartItem);
+            this._collections.forEach(el => {
+                if (el.name === collectionName) {
+                    if (el.size === '') el.size = collectionSize;
+                    if (el.color === '') el.color = collectionColor;
+                    if (el.price === '') el.price = collectionPrice;
+                    if (el.discount === '') el.discount = collectionDiscount;
+                };
+            });
+
+            // 2) kreiraj novi artikal u leggingsState.cart
+            handler(item[0]);
         });
+
         // SIZE
         this._parentElement.addEventListener('click', (e) => {
             const allBtns = e.target.closest('.shop__selection__sizes-buttons');
             const sizeBtn = e.target.closest('.shop__selection__sizes-size');
             if (!sizeBtn) return;
 
-            this._cartItem.size = sizeBtn.dataset['size'];
+            const collectionName = sizeBtn.dataset['name'];
+            const collectionSize = sizeBtn.dataset['size'];
+            this._collections.forEach(el => {
+                if (el.name === collectionName) el.size = collectionSize;
+            });
 
             const buttons = allBtns.children; // imam div element a potrebni su mi njegovi childrenNodes
             for (const btn of buttons) {
@@ -122,13 +119,18 @@ class HeroView extends View {
             }
             sizeBtn.classList.add('shop__size-button--active');
         });
+
         // COLOR
         this._parentElement.addEventListener('click', (e) => {
             const allBtns = e.target.closest('.shop__selection__colors');
             const colorBtn = e.target.closest('.shop__selection__colors-color');
             if (!colorBtn) return;
 
-            this._cartItem.color = colorBtn.dataset['color'];
+            const collectionName = colorBtn.dataset['name'];
+            const collectionColor = colorBtn.dataset['color'];
+            this._collections.forEach(el => {
+                if (el.name === collectionName) el.color = collectionColor;
+            });
 
             const buttons = allBtns.children; // imam div element a potrebni su mi njegovi childrenNodes
             for (const btn of buttons) {
@@ -211,11 +213,16 @@ class HeroView extends View {
                                     <p class="shop-text shop-text--inline ">Vodič za veličine</p>
 
                                     <div class="shop__selection__sizes-buttons">
-                                        ${this._renderSizeButtons(sizes)}
+                                        ${this._renderSizeButtons(sizes, name)}
                                     </div>
 
                                     <p class="shop-text shop-text--button uppercase headings-font"
-                                        data-add-to-cart="${[name, price, discount, colors[0]]}"
+                                        data-all="${[name, price, discount, colors[0], sizes[1]]}"
+                                        data-name="${name}"
+                                        data-price="${price}"
+                                        data-discount="${discount}"
+                                        data-size="${sizes[1]}"
+                                        data-color="${colors[0]}"
                                     >Ubaci u korpu</p>
                                 </div>
                             </div>
@@ -257,15 +264,15 @@ class HeroView extends View {
         return markup;
     };
 
-    _renderSizeButtons(sizesArray) {
+    _renderSizeButtons(sizesArray, name) {
         const markup = sizesArray.map((size, i) => {
             if (i === 1) {
                 return `
-                <div class="shop__selection__sizes-size uppercase shop__size-button--active" data-size="${size}">${size}</div>
+                <div class="shop__selection__sizes-size uppercase shop__size-button--active" data-name="${name}" data-size="${size}">${size}</div>
                 `;
             } else {
                 return `
-                <div class="shop__selection__sizes-size uppercase" data-size="${size}">${size}</div>
+                <div class="shop__selection__sizes-size uppercase" data-name="${name}" data-size="${size}">${size}</div>
                 `;
             }
         }).join('');

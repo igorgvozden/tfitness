@@ -1,7 +1,7 @@
 import View from './view.mjs';
 import { API_URL } from '../frontConfig.js';
 
-class Cart extends View {
+class CartView extends View {
     _parentElement = document.querySelector('.modal');
     _cartContainer = document.querySelector('.cart-container');
 
@@ -10,13 +10,28 @@ class Cart extends View {
 
         this._hideCart();
 
-        // 1) proveri postoji li cart u localStorage - ako nema renderuj empty cart
-        const isLocalStorage = localStorage.getItem('cart');
-        if (!isLocalStorage) this._generateEmptyCart();
+        // 1) proveri postoji li cart u localStorage/model - ako nema renderuj empty cart
+        if (this._data.cart.length < 1) this._generateEmptyCart();
 
-        // 2) ako postoji localStorage za cart - renderuj cart
-        if (isLocalStorage) this._generateFullCart();
+        // 2) ako postoji localStorage/model za cart - renderuj cart
+        if (this._data.cart.length >= 1) this._generateFullCart()
 
+        // 3) dodaj buttone
+        this._removeCartItem();
+        // console.log(this)
+    };
+
+    _removeCartItem() {
+        this._cartContainer.addEventListener('click', (e) => {
+            const removeBtn = e.target.closest('.cart-btn--remove');
+            if (!removeBtn) return;
+
+            const cartItem = e.target.closest('.cart__item');
+            cartItem.style.display = 'none';
+
+            console.log('delete');
+
+        });
     };
 
     _hideCart() {
@@ -25,20 +40,18 @@ class Cart extends View {
 
         this._parentElement.addEventListener('click', (e) => {
             const closeBtn = e.target.closest('.cart__close-btn');
+            const backToShoppingBtn = e.target.closest('.cart-container__button--empty');
             const cart = e.target.closest('.cart');
-            if (cart && !closeBtn) return;
+            if (cart && !closeBtn && !backToShoppingBtn) return;
             this.toggleShowCart();
         });
     };
 
-    _parseLocalStorage() {
-        const currentStorage = JSON.parse(localStorage.getItem('cart'));
-        console.log(currentStorage);
-        return currentStorage;
+    _updateCart() {
+        this._cartContainer.innerHTML = 'update';
     };
 
     _generateFullCart() {
-
         const markup = `
                 <div class="cart-container__info">
                 <div class="cart-container__info__items">
@@ -86,19 +99,17 @@ class Cart extends View {
     };
 
     _generateCartItems() {
-        const storageItems = this._parseLocalStorage();
-
-        const markup = storageItems.map(item => {
-            const { name, color, size, price, discount } = item;
-
-            return this._generateCartItemsMarkup(name, color, size, price);
+        const cartItems = this._data.cart;
+        const markup = cartItems.map(item => {
+            const { name, color, size, price, discount, quantity } = item;
+            return this._generateCartItemsMarkup(name, color, size, price, discount, quantity);
         });
         return markup.join('');
     };
 
-    _generateCartItemsMarkup(name, color, size, price, discount) {
+    _generateCartItemsMarkup(name, color, size, price, discount, quantity) {
         return `
-            <div class="cart__item">
+            <div class="cart__item" data-item="${[name, color, size]}">
                 <div class="cart__item__desc">
                     <div class="cart__item__text">
                         <p
@@ -118,13 +129,13 @@ class Cart extends View {
                 </div>
 
                 <div class="cart__item__bar">
-                    <p class="cart__item__bar-text cart__item__bar-text--btn">
+                    <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--remove">
                         <img src="./images/trash.svg" alt="kanta" />
                     </p>
                     <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--minus">-</p>
-                    <p class="cart__item__bar-text cart__item__bar-text--quantity">1</p>
+                    <p class="cart__item__bar-text cart__item__bar-text--quantity">${quantity}</p>
                     <p class="cart__item__bar-text cart__item__bar-text--btn cart-btn--plus">+</p>
-                    <p class="cart__item__bar-text cart__item__bar-text--amount">0.00 rsd</p>
+                    <p class="cart__item__bar-text cart__item__bar-text--amount">${price * quantity} rsd</p>
                 </div>
             </div>
         `;
@@ -142,4 +153,4 @@ class Cart extends View {
 
 };
 
-export default new Cart();
+export default new CartView();

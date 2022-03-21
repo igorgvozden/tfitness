@@ -45,12 +45,13 @@ export const createPossibleUser = function (data) {
 };
 
 //////////////////////////////
-//////////// STATE ZA PROIZVODE
+//////////// STATE ZA ARTIKLE
 
 export const leggingsState = {
     results: null,
     leggings: [],
-    bookmarks: []
+    bookmarks: [],
+    cart: []
 };
 
 // KREIRANJE PODATAKA U STATE
@@ -84,8 +85,8 @@ export const persistBookmarks = function () {
     localStorage.setItem('leggingsBookmarks', JSON.stringify(leggingsState.bookmarks));
 };
 
-export const addBookmark = function (legging) {
-    leggingsState.bookmarks.push(legging);
+export const addBookmark = function (item) {
+    leggingsState.bookmarks.push(item);
 
     persistBookmarks();
 };
@@ -104,4 +105,83 @@ export const deleteBookmark = function () {
 export const clearAllBookmarks = function () {
     localStorage.clear('leggingsBookmarks');
 };
+
 ///////////////////////////////
+// CART
+
+export const persistCart = function () {
+
+};
+
+export const addToCart = function (item) {
+    const storage = localStorage.getItem('cart');
+
+    // 1) ako je LC prazan, dodaj item
+    if (storage === null) {
+        localStorage.setItem('cart', JSON.stringify([item]));
+
+        // postavi cart u leggingsState
+        leggingsState.cart = JSON.parse(localStorage.getItem('cart'));
+        console.log(leggingsState.cart, 'state cart')
+    };
+
+    // 2) ako LC nije prazan, pushuj item uz postojece artikle
+    if (storage) {
+        // parsuj LC
+        const parsedStorage = JSON.parse(storage);
+
+        // proveri da li postoje dupli artikli
+        //////////// ako postoji, promeni quantity artikla na +=1
+        const duplicate = parsedStorage.find(el => {
+            const sample = el.name + el.color + el.size;
+            const compareTo = item.name + item.color + item.size;
+
+            if (JSON.stringify(sample) === JSON.stringify(compareTo)) {
+                el.quantity += 1;
+                return el;
+            };
+        });
+
+        // pushuj item iz store-a u parsed localStorage
+        parsedStorage.push(item);
+
+        // const filtered = parsedStorage.filter((el, i, array) => array.findIndex(el2 => (JSON.stringify(el2) === JSON.stringify(el))) === i); /////////////
+        // filteruj sve duplikate iz arraya
+        const filtered = parsedStorage.filter((el, i, array) => {
+            return array.findIndex(el2 => {
+                const sample = el.name + el.color + el.size;
+                const compareTo = el2.name + el2.color + el2.size;
+
+                return (JSON.stringify(sample) === JSON.stringify(compareTo));
+            }) === i;
+        });
+
+        console.log(parsedStorage, 'parsed');
+        console.log(filtered, 'filtered');
+        console.log(duplicate, 'duplicate');
+
+        // sacuvaj cart u localStorage
+        localStorage.setItem('cart', JSON.stringify(filtered));
+
+        // postavi cart u leggingsState.cart
+        leggingsState.cart = JSON.parse(localStorage.getItem('cart'));
+        console.log(leggingsState.cart, 'state cart')
+    };
+
+};
+
+export const loadCart = function () {
+    const storage = localStorage.getItem('cart');
+    const parsedStorage = JSON.parse(storage);
+
+    if (!parsedStorage || parsedStorage.length < 1) {
+        localStorage.clear();
+        console.log('front model - cart je prazan');
+        return;
+    };
+
+    leggingsState.cart.push(...parsedStorage);
+    console.log('front model - cart', parsedStorage);
+    return parsedStorage;
+};
+

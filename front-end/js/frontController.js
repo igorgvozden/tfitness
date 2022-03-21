@@ -3,7 +3,7 @@ import * as model from './frontModel.mjs';
 import navbarView from './../views/navbarView.mjs';
 import loginView from '../views/loginView.mjs';
 import heroView from '../views/heroView.mjs';
-import cart from '../views/cart.mjs';
+import cartView from '../views/cartView.mjs';
 
 console.log('we are live 1', API_URL);
 
@@ -22,8 +22,6 @@ const getData = async function () {
         let data = await response.json();
         console.log(data, 'podaci su fetchovani');
 
-
-        console.log(JSON.parse(localStorage.getItem('cart'))); ////////////////
 
         // 2) proveri da li su artikli dostupni sa servera
         if (!data || data.results === 0) throw new Error;
@@ -326,13 +324,17 @@ const handleFormCloseButtonClick = function () {
 };
 
 const handleCartIconClick = function () {
-    cart.toggleShowCart();
+    cartView.toggleShowCart();
 };
 
 const reloadPage = function (miliseconds = 1000) {
     window.setTimeout(() => location.reload(), miliseconds);
 };
 
+const addToCart = function (item) {
+    model.addToCart(item);
+    cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
+};
 /////////
 
 const init = function () {
@@ -346,5 +348,10 @@ const init = function () {
     loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
     // login/register/update user
     loginView.addLoginHandler(loggerHandler);
+    // cart
+    model.loadCart();
+    cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
+    heroView.addAddToCartHandler(addToCart)
+
 };
 init();

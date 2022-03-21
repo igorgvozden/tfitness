@@ -1,6 +1,6 @@
 import View from './view.mjs';
 import { API_URL } from '../frontConfig.js';
-import cart from './cart.mjs';
+import cart from './cartView.mjs';
 
 class NavbarView extends View {
     _data;
