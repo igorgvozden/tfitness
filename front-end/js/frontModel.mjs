@@ -157,9 +157,9 @@ export const addToCart = function (item) {
             }) === i;
         });
 
-        console.log(parsedStorage, 'parsed');
-        console.log(filtered, 'filtered');
-        console.log(duplicate, 'duplicate');
+        // console.log(parsedStorage, 'parsed');
+        // console.log(filtered, 'filtered');
+        // console.log(duplicate, 'duplicate');
 
         // sacuvaj cart u localStorage
         persistCart(filtered);

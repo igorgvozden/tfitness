@@ -1,6 +1,5 @@
 import View from './view.mjs';
 import { API_URL } from '../frontConfig.js';
-import cart from './cartView.mjs';
 
 class NavbarView extends View {
     _data;
@@ -25,6 +24,19 @@ class NavbarView extends View {
         });
     };
 
+    addCartBadge(cart) {
+        const badge = document.querySelector('.nav__btn-badge');
+        const cartIcon = document.querySelector('.nav__btn--cart');
+
+        const itemsInCart = cart.reduce((total, item) => item.quantity + total, 0);
+        const badgeMarkup = `<span class="nav__btn-badge">${itemsInCart}</span>`;
+
+        itemsInCart < 1 ? cartIcon.insertAdjacentHTML('afterbegin', '') : cartIcon.insertAdjacentHTML('afterbegin', badgeMarkup);
+
+        if (!badge) return;
+        badge.remove();
+    };
+
     // ako je korisnik ulogovan menja se korisnik ikonica
     renderUserIcon(param) {
         const userBtn = document.querySelector('.nav__icon--profile');
@@ -35,7 +47,7 @@ class NavbarView extends View {
     // 1) proveri da li postoji model.stateUser i da li je admin
     renderAdminIcon(param, address) {
         const adminBtn = document.querySelector('.nav__btn--admin');
-        console.log(adminBtn, address);
+        // console.log(adminBtn, address);
         if (param === true) {
             adminBtn.classList.remove('hidden');
 

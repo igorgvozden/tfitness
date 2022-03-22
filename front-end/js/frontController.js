@@ -337,29 +337,36 @@ const addToCart = function (item) {
     model.addToCart(item);
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
     cartView.updateCart();
+
+    navbarView.addCartBadge(model.leggingsState.cart);
 };
 
 const removeCartItem = function (item) {
     model.removeCartItem(item);
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
     cartView.updateCart();
+
+    navbarView.addCartBadge(model.leggingsState.cart);
 };
 
 const increaseItemQuantity = function (item) {
     model.increaseItemQuantity(item);
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
     cartView.updateCart();
+
+    navbarView.addCartBadge(model.leggingsState.cart);
 };
 
 const decreaseItemQuantity = function (item, itemQuantity) {
     itemQuantity > 1 ? model.decreaseItemQuantity(item) : model.removeCartItem(item);
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
     cartView.updateCart();
+
+    navbarView.addCartBadge(model.leggingsState.cart);
 };
 /////////
 
 const init = function () {
-    console.log(model.userState)
     // inicijalizacija navbara
     navbarView.addHandlerInitialize(handleNavbarView);
     navbarView.addHandlerloginIconClick(handleProfileIconClick);
@@ -369,13 +376,14 @@ const init = function () {
     loginView.addHandlerLoginFormCloseBtn(handleFormCloseButtonClick);
     // login/register/update user
     loginView.addLoginHandler(loggerHandler);
-    // cart
+    // inicijalizacija cart-a i aktiviranje dugmica
     model.loadCart();
     cartView.initialize({ user: model.userState, cart: model.leggingsState.cart });
     heroView.addAddToCartHandler(addToCart);
     cartView.addRemoveCartItemHandler(removeCartItem);
     cartView.addIncreaseQuantityHandler(increaseItemQuantity);
     cartView.addDecreaseQuantityHandler(decreaseItemQuantity);
+    navbarView.addCartBadge(model.leggingsState.cart);
 
 };
 init();
