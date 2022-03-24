@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const AppError = require("../utilities/appError");
 const User = require("../models/userModel");
-const sendEmail = require('../utilities/email');
+// const sendEmail = require('../utilities/email');
+const Email = require('../utilities/email');
 
 // const signToken = function (id) {
 //     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -145,6 +146,7 @@ exports.signUp = async (req, res, next) => {
         const userEmail = await User.findOne({ email });
         if (userEmail) return next(new AppError('Email vec postoji', 500));
 
+        // 4) kreiraj korisnika u db
         const newUser = await User.create({
             name,
             email,
@@ -170,6 +172,9 @@ exports.signUp = async (req, res, next) => {
         //     }
         // });
 
+        // 5) posalji email korisniku da se registrovao
+        Email(newUser).sendWelcome();
+
         // ovde bi trebalo sacuvati token u cookie
         createAndSendCookie(newUser, 201, res)
     } catch (err) {
@@ -194,6 +199,8 @@ exports.login = async (req, res, next) => {
         };
         // 3) ako su prve dve u redu, posalji token nazad klijentu
         user.password = undefined;
+
+        // new Email(user).sendWelcome();
         createAndSendCookie(user, 200, res);
 
         // const token = signToken(user._id);
@@ -213,17 +220,13 @@ exports.forgotPassword = async (req, res, next) => {
     // 2) napravi random reset token
     const resetToken = user.createResetPasswordToken();
     await user.save({ validateBeforeSave: false }); // ovo ce da iskljuci validatore u schemi
-    // 3) posalji mu to na email
-    const resetURL = `${req.protocol}://${req.get('host')}/users/resetpassword/${resetToken}`;
-
-    const message = `Da bi resetovali Lozinku, prosledi novi password i confirmPassword na patch url: ${resetURL}\n Ako niste zatrazili promenu lozinke, zanemarite ovaj imejl.`
 
     try {
-        // await sendEmail({
-        //     email: user.email,
-        //     subject: 'Vas zahtev za promenu lozinke(vazi narednih 10 minuta)',
-        //     message
-        // });
+        // 3) posalji mu to na email
+        const resetURL = `${req.protocol}://${req.get('host')}/users/resetpassword/${resetToken}`; // ovo je url za forgotPass route
+        const mailResetURL = `${process.env.FRONT_END_URL}/?#reset=${resetToken}`; // ovo je url da korisnik moze iz dobijenog mejla za eset pass da se preusmeri na sajt
+        new Email(user, mailResetURL).sendForgotPassword();
+
         res.status(200).json({
             status: 'success',
             message: 'Token sent to users email!'

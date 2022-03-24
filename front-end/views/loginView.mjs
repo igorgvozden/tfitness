@@ -19,6 +19,10 @@ class LoginView extends View {
         // 3) ako nije ulogovan, prikazi login formu
         if (!userLogged) this._renderComponent(this._generateLogin());
 
+        // 4) ako je URL prosledjen sa forgotPassword ili resetPassword, URL ce imati hash
+        if (window.location.hash) this._renderComponent(this._generateResetPassword());
+
+        // 5) aktiviraj dugmice za switch login/register
         this._loginRegisterSwitch();
     };
 
@@ -108,6 +112,16 @@ class LoginView extends View {
             const dataArray = [...new FormData(form)];
             const userData = Object.fromEntries(dataArray);
             userData.action = form.dataset['action'];
+
+            // proveri da li URL ima hash u sebi // ako ima, URL je formiran za reset passworda
+            if (window.location.hash) {
+                // req.body na ruti za passwordReset  zahteva objekat {password i confirmPassword}, i trazi token za korisnika kao parametar /resetpassword/:token
+                const resetToken = window.location.hash.split('=')[1];
+                userData.resetToken = resetToken;
+                //controller ce proslediti req.body objekat iz forme, na url sa tokenom
+                // ako dobije dobar res, obrisace hash iz URL
+                // ruta za resetPassword vraca korisnika za kog je menjan pass, pa pokupi mail i uloguj korisnika odmah
+            };
 
             // proveri form inpute - da li su svi popunjeni
 
@@ -285,6 +299,39 @@ class LoginView extends View {
         `;
     };
 
+    _generateResetPassword() {
+        return `
+        <div class="login-container__mask" id="reset-modal">
+        <form class="login-form" data-action="password">
+        <p class="login-container__close-btn">&#10006;</p>
+            <h4 class="uppercase headings-font login-form__element">promeni lozinku</h4>
+
+            <label class="login-form__label login-form__element">Lozinka:
+                <input class="login-form__input login-form__input--password" type="password" name="password"
+                    placeholder="Unesi novu lozinku" />
+                <span class="login-form__password__eye">
+                    <img class="login-form__password__eye-icon" src="./images/eye-on.svg" />
+                </span>
+            </label>
+
+            <span class="login-form__label__span" data-err-span="password"></span>
+
+                    <label class="login-form__label login-form__element">Potvrdi Lozinku:
+                        <input class="login-form__input" type="password" name="confirmPassword"
+                            placeholder="Unesi novu lozinku" />
+                        <span class="login-form__password__eye">
+                            <img class="login-form__password__eye-icon" src="./images/eye-on.svg" />
+                        </span>
+                    </label>
+
+                <span class="login-form__label__span" data-err-span="confirmPassword"></span>
+
+            <button class="login-form__submit-button uppercase headings-font login-form__element"
+                type="submit">Promeni Lozinku</button>
+        </form>
+    </div>
+        `;
+    };
 };
 
 export default new LoginView();

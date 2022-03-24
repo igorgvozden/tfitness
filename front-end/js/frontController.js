@@ -232,6 +232,35 @@ const updateUser = async function (dataOfForm) {
     };
 };
 
+const resetPassword = async function (dataOfForm) {
+    try {
+        const formSubmitBtn = document.querySelector('.login-form__submit-button');
+        loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
+
+        // napravi fetch na ruti za pass
+        const response = await fetch(`${API_URL}/users/resetpassword/:${dataOfForm.resetToken}`, {
+            method: 'PATCH',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Origin': `${API_URL}/users/resetpassword/:${dataOfForm.resetToken}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(dataOfForm)
+        });
+
+        const data = await response.json();
+        console.log(data, 'reset pass data');
+
+    } catch (error) {
+        console.log(error);
+    };
+};
+
 ///////// HANDLER FUNKCIJE
 const loggerHandler = async (data) => {
     try {
@@ -251,6 +280,10 @@ const loggerHandler = async (data) => {
             reloadPage(1000);
         };
 
+        // 5) ako je prosledjen RESET, a) prsledi na resetPAssword rutu, b) upisi korisnika u userState/uloguj ga, c) obrisi hash iz URL
+        if (data.action === 'reset') {
+            resetPassword(data);
+        };
     } catch (error) {
         console.log(error)
     };
