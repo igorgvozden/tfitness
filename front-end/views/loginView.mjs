@@ -20,9 +20,22 @@ class LoginView extends View {
         if (!userLogged) this._renderComponent(this._generateLogin());
 
         // 4) ako je URL prosledjen sa forgotPassword ili resetPassword, URL ce imati hash
-        if (window.location.hash) this._renderComponent(this._generateResetPassword());
+        if (window.location.hash && !userLogged) {
+            const background = document.querySelector('.header-container');
+            const nav = document.querySelector('.header-container_nav');
+            const hero = document.querySelector('.hero');
+            this._renderComponent(this._generateResetPassword());
+            // kada je korisnik ulogovan problem jer skida odmah login formu
+            this.showLoginView();
+            background.classList.toggle('blured');
+            hero.classList.toggle('blured');
+            nav.classList.toggle('fixed');
+        };
 
-        // 5) aktiviraj dugmice za switch login/register
+        // 5) ako je korisnik ulogovan i zeli promenu passworda
+        if (window.location.hash && userLogged) this._renderComponent(this._generateResetPassword(true));
+
+        // 6) aktiviraj dugmice za switch login/register
         this._loginRegisterSwitch();
     };
 
@@ -70,9 +83,22 @@ class LoginView extends View {
             if (!switchBtn) return;
 
             const switchTo = switchBtn.dataset['switchTo'];
+            const isLoggedIn = switchBtn.dataset['isLoggedIn'];
 
             if (switchTo === 'login') this._renderComponent(this._generateLogin());
             if (switchTo === 'register') this._renderComponent(this._generateRegister());
+            ////////////// forgot i reset password
+            if (switchTo === 'password') this._renderComponent(this._generateResetPassword());
+            // ako je korsnik zaboravio password i nije ulogovan
+            if (switchTo === 'forgot-password') this._renderComponent(this._generateForgotPassword());
+            // ako je korisnik ulogovan i zeli da promeni password
+            if (switchTo === 'forgot-password' && isLoggedIn) this._renderComponent(this._generateForgotPassword(true));
+            // ako je ulogovan i zeli da se vrati na svoj user panel
+            if (switchTo === 'user-panel') {
+                this._renderComponent(this._generateUserPanel());
+                this._populateUserPanelForm();
+            };
+            //////////////
 
             this._collectFormData();
         });
@@ -189,8 +215,10 @@ class LoginView extends View {
             <span class="login-form__label__span" data-err-span="password"></span>
 
 
-            <p class="login-form__element login-form__links login-form__links--highlighted">Ne secas se svoje
-                lozinke?</p>
+            <p class="login-form__element login-form__links login-form__links--highlighted login-form__switch-btn" 
+                data-switch-to="forgot-password">
+                Ne secas se svoje lozinke?
+            </p>
             <button class="login-form__submit-button uppercase headings-font login-form__element"
                 type="submit">Uloguj
                 se</button>
@@ -247,7 +275,8 @@ class LoginView extends View {
                         type="submit">registruj
                         se</button>
                     <p class="login-form__element login-form__links">Vec imas profil? <span
-                            class="login-form__links--highlighted login-form__switch-btn" data-switch-to="login">Uloguj se!</span></p>
+                            class="login-form__links--highlighted login-form__switch-btn" data-switch-to="login">Uloguj se!</span>
+                    </p>
                 </form>
             </div>
         `;
@@ -279,8 +308,13 @@ class LoginView extends View {
                             <label class="login-form__label login-form__element">Telefon:
                                 <input class="user-panel-form__input" type="text" name="telephone" placeholder="" data-placeholder="npr: 060 123 4 567"/>
                             </label>
-                            <p class="login-form__element login-form__links login-form__links--highlighted">Želiš da
-                                promeniš lozinku?</p>
+
+                            <p class="login-form__element login-form__links login-form__links--highlighted login-form__switch-btn"
+                                data-switch-to="forgot-password"
+                                data-is-logged-in="true">
+                                Želiš da promeniš lozinku?
+                            </p>
+
                             <button class="login-form__submit-button uppercase headings-font login-form__element"
                                 type="submit">sacuvaj promene</button>
                         </form>
@@ -301,7 +335,7 @@ class LoginView extends View {
 
     _generateResetPassword() {
         return `
-        <div class="login-container__mask" id="reset-modal">
+        <div class="login-container__mask">
         <form class="login-form" data-action="password">
         <p class="login-container__close-btn">&#10006;</p>
             <h4 class="uppercase headings-font login-form__element">promeni lozinku</h4>
@@ -332,6 +366,38 @@ class LoginView extends View {
     </div>
         `;
     };
+
+    _generateForgotPassword(isLoggedIn = false) {
+        return `
+        <div class="login-container__mask" id="reset-modal">
+        <form class="login-form" data-action="forgot-password">
+        <p class="login-container__close-btn">&#10006;</p>
+            <h4 class="uppercase headings-font login-form__element">unesi svoju email adresu</h4>
+
+            <label class="login-form__label login-form__element">Email adresa:
+                <input class="login-form__input" type="text" name="email"
+                    placeholder="Unesi svoju e-mail adresu" />
+            </label>
+
+            <span class="login-form__label__span" data-err-span="email"></span>
+
+            ${!isLoggedIn ?
+                `<p class="login-form__element login-form__links">Vrati se na <span
+                    class="login-form__links--highlighted login-form__switch-btn" data-switch-to="login">Login formu!</span>
+                </p>`
+                : `
+                <p class="login-form__element login-form__links"> <span
+                class="login-form__links--highlighted login-form__switch-btn" data-switch-to="user-panel">Vrati me nazad!</span>
+                </p>`
+            }
+
+            <button class="login-form__submit-button uppercase headings-font login-form__element"
+                type="submit">Pošalji zahtev</button>
+        </form>
+    </div>
+        `;
+    };
+
 };
 
 export default new LoginView();

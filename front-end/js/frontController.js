@@ -22,7 +22,6 @@ const getData = async function () {
         let data = await response.json();
         console.log(data, 'podaci su fetchovani');
 
-
         // 2) proveri da li su artikli dostupni sa servera
         if (!data || data.results === 0) throw new Error;
 
@@ -232,19 +231,46 @@ const updateUser = async function (dataOfForm) {
     };
 };
 
-const resetPassword = async function (dataOfForm) {
+const forgotPassword = async function (dataOfForm) {
     try {
         const formSubmitBtn = document.querySelector('.login-form__submit-button');
         loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
 
-        // napravi fetch na ruti za pass
-        const response = await fetch(`${API_URL}/users/resetpassword/:${dataOfForm.resetToken}`, {
+        const response = await fetch(`${API_URL}/users/forgotpassword`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Origin': `${API_URL}/users/forgotpassword`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(dataOfForm)
+        });
+        const data = await response.json();
+
+        loginView.renderSpinner(formSubmitBtn, `${data.message}`);
+
+    } catch (error) {
+        console.log(error);
+        loginView.renderSpinner(formSubmitBtn, `${error.message}`);
+    }
+};
+
+const resetPassword = async function (dataOfForm) {
+    try {
+        const formSubmitBtn = document.querySelector('.login-form__submit-button');
+        loginView.renderSpinner(formSubmitBtn); //////////////////////////////////////
+        console.log(dataOfForm)
+        // 1) napravi fetch na ruti za pass
+        const response = await fetch(`${API_URL}/users/resetpassword/${dataOfForm.resetToken}`, {
             method: 'PATCH',
             mode: 'cors',
             cache: 'no-cache',
             headers: {
                 'Access-Control-Allow-Credentials': true,
-                'Access-Control-Allow-Origin': `${API_URL}/users/resetpassword/:${dataOfForm.resetToken}`,
+                'Access-Control-Allow-Origin': `${API_URL}/users/resetpassword/${dataOfForm.resetToken}`,
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
@@ -254,10 +280,13 @@ const resetPassword = async function (dataOfForm) {
         });
 
         const data = await response.json();
-        console.log(data, 'reset pass data');
 
+        // 2) proveri sta je odgovor sa servera i ispisi res.message u submit dugmetu
+        loginView.renderSpinner(formSubmitBtn, `${data.message ? data.message : 'lozinka je promenjena!'}`);
+        if (data.status === 'success') window.location.replace(window.location.origin);
     } catch (error) {
         console.log(error);
+        loginView.renderSpinner(formSubmitBtn, `${error.message}`);
     };
 };
 
@@ -280,10 +309,14 @@ const loggerHandler = async (data) => {
             reloadPage(1000);
         };
 
-        // 5) ako je prosledjen RESET, a) prsledi na resetPAssword rutu, b) upisi korisnika u userState/uloguj ga, c) obrisi hash iz URL
-        if (data.action === 'reset') {
+        // 5) ako je prosledjen RESET, a) prosledi na resetPassword rutu
+        if (data.action === 'password') {
             resetPassword(data);
         };
+
+        // 6) ako je zaboravljen Pass i treba proslediti password reset link na mail adresu korsnika
+        if (data.action === 'forgot-password') forgotPassword(data);
+
     } catch (error) {
         console.log(error)
     };

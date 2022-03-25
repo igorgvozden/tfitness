@@ -229,7 +229,7 @@ exports.forgotPassword = async (req, res, next) => {
 
         res.status(200).json({
             status: 'success',
-            message: 'Token sent to users email!'
+            message: 'zahtev je prosleđen na tvoj email!'
         });
     } catch (err) {
         user.passwordResetToken = undefined;
@@ -251,7 +251,7 @@ exports.resetPassword = async (req, res, next) => {
     });
 
     // 2) ako token nije istekao i postoji korisnik, postavi novi password
-    if (!user) return next(new AppError('Token nije vazeci, ili je istekao!', 400));
+    if (!user) return next(new AppError('Vreme za promenu Lozinke je isteklo!', 400));
 
     user.password = req.body.password;
     user.confirmPassword = req.body.confirmPassword;
