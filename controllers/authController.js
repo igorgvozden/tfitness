@@ -264,6 +264,7 @@ exports.resetPassword = async (req, res, next) => {
 
     await user.save();
 
+    new Email(user).passwordReset();
     // 4) login korisnika, posalji mu novi JWT
     createAndSendCookie(user, 200, res);
 

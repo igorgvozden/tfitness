@@ -82,8 +82,6 @@ class CartView extends View {
             const cartForm = document.querySelector('.cart-form');
 
             // info o artiklima i kupcu imas u this._data
-            console.log(this._data, cartForm);
-
             /////////////////////////////////////
 
             // 1) pokupi podatke iz forme
@@ -91,25 +89,57 @@ class CartView extends View {
             const formData = Object.fromEntries(dataArray);
 
             // 2) ako je korisnik ulogovan, uporedi podatke iz forme sa this._date.user
+            let formInputsValidator = true; // validator koji ce dozvoliti slanje na mail ako su sva polja popunjena
+
             if (this._data.user.user) {
                 const currentUser = this._data.user.user;
 
                 // proveri da li korisnik menjao svoje podatke u formi
                 Object.entries(formData).forEach(el => {
                     if (el[1] !== currentUser[el[0]]) currentUser[el[0]] = el[1];
+                    if (el[1].length < 1) formInputsValidator = false;
                 });
+
+                // ovo treba proslediti na mail
+                formInputsValidator ? console.log('guestData treba proslediti na mail', this._data.cart, currentUser) : console.log('popuni sva polja');
             } else {
                 // ako korisnik nije ulogovan, prosledi podatke iz forme
-                this._data.user.user = formData;
-            }
+                const guestData = formData;
+                Object.entries(formData).forEach(el => {
+                    if (el[1].length < 1) formInputsValidator = false;
+                });
 
-            // URADI PROVERU INPUTA NA FORMI
+                // ovo treba proslediti na mail
+                formInputsValidator ? console.log('guestData treba proslediti na mail', this._data.cart, guestData) : console.log('popuni sva polja');
+            };
 
-            ////////////////
-            // prosledi na mail
-            console.log(this._data, 'ovo treba proslediti na mail')
+            // URADI PROVERU INPUTA NA FORMI NA SUBMIT
+            const errorSpans = document.querySelectorAll('.cart-form__error-span');
+
+            Object.entries(formData).forEach((entrie, entrieIndex) => {
+                errorSpans.forEach((errSpan, spanIndex, spanArr) => {
+                    if (entrie[1].length < 1) spanArr[entrieIndex].innerHTML = 'Ne može biti prazno';
+                });
+            });
+
+            // URADI PROVERU INPUTA NA FORMI NA INPUT(eventu)
+            this._checkFormInputs();
         });
+    };
 
+    _checkFormInputs() {
+        const cartForm = document.querySelector('.cart-form');
+        const errorSpans = document.querySelectorAll('.cart-form__error-span');
+        const inputs = document.querySelectorAll('.form-input');
+
+        cartForm.addEventListener('input', (e) => {
+            inputs.forEach((inp, inputIndex) => {
+                errorSpans.forEach((errSpan, errIndex, errArray) => inp.value.length < 1 ?
+                    errArray[inputIndex].innerHTML = 'Ne može biti prazno'
+                    : errArray[inputIndex].innerHTML = ''
+                );
+            });
+        });
     };
 
     _generateFullCart() {
@@ -148,18 +178,26 @@ class CartView extends View {
                     <input class="cart-form__input form-input" type="text" name="name" placeholder="npr. Jana Jovanovic"
                         data-placeholder="npr. Jana Jovanovic" />
                 </label>
+                <span class="cart-form__error-span"></span>
+
                 <label class="cart-form__label form-label">Mesto:
                     <input class="cart-form__input form-input" type="text" name="city" placeholder="npr. 21000 Novi Sad"
                         data-placeholder="npr. 21000 Novi Sad" />
                 </label>
-                <label class="cart-form__label form-label">Adresa:
+                <span class="cart-form__error-span"></span>
+
+                <label class="cart-form__label form-label">Adresa: 
                     <input class="cart-form__input form-input" type="text" name="address" placeholder="npr. Bulevar Oslobođenja 21/3"
                         data-placeholder="npr. Bulevar Oslobođenja 21/3" />
                 </label>
-                <label class="cart-form__label form-label">Telefon:
+                <span class="cart-form__error-span"></span>
+
+                <label class="cart-form__label form-label">Telefon: 
                     <input class="cart-form__input form-input" type="text" name="telephone" placeholder="npr. 060 123 4 567"
                         data-placeholder="npr. 060 123 4 567" />
                 </label>
+                <span class="cart-form__error-span"></span>
+
                 <p class="cart-form__link form-links">imaš nalog?
                     <span class="form-links--highlighted cart-form__switch-btn">Uloguj se!</span>
                 </p>
@@ -184,16 +222,19 @@ class CartView extends View {
                     value="${user.user.city}"
                         data-placeholder="npr. 21000 Novi Sad" />
                 </label>
+                <span class="cart-form__error-span"></span>
                 <label class="cart-form__label form-label">Adresa:
                     <input class="cart-form__input form-input" type="text" name="address" placeholder="npr. Bulevar Oslobođenja 21/3"
                     value="${user.user.address}"
                         data-placeholder="npr. Bulevar Oslobođenja 21/3" />
                 </label>
+                <span class="cart-form__error-span"></span>
                 <label class="cart-form__label form-label">Telefon:
                     <input class="cart-form__input form-input" type="text" name="telephone" placeholder="npr. 060 123 4 567"
                     value="${user.user.telephone}"
                         data-placeholder="npr. 060 123 4 567" />
                 </label>
+                <span class="cart-form__error-span"></span>
             </form>
         `;
     };

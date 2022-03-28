@@ -654,6 +654,12 @@
 .cart-form__label {
   margin: 0.7rem 0; }
 
+.cart-form__error-span {
+  color: red;
+  font-size: 0.8rem;
+  transform: translate(5rem, -4.2rem);
+  position: absolute; }
+
 .cart-container__sumary {
   margin-top: 2rem;
   display: flex;
